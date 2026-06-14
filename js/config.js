@@ -85,6 +85,7 @@ const SITE = {
         en: "You are a fish that shoots bubbles and sword-fights with its tail. Swim through the maze, collect hearts for life, and dodge the giant fish!",
       },
       comic: "ribji-klofut",
+      game: "ribji-klofut.html",
     },
   ],
 
