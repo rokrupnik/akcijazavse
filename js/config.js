@@ -66,7 +66,7 @@ const SITE = {
     {
       id: "elektroni",
       author: "simon",
-      cover: "assets/strip-1.png",
+      cover: "assets/elektroni/cover.webp",
       title: { sl: "Elektroni: strah v rokah", en: "Electrons: fear in their hands" },
       blurb: {
         sl: "Ti si elektron – prijazni hrček s strelami. Premagaj zlobne hrčke in velikega hrčka!",
@@ -83,10 +83,10 @@ const SITE = {
       author: "simon",
       title: { sl: "Elektroni – strip", en: "Electrons – comic" },
       pages: [
-        "assets/strip-1.png",
-        "assets/strip-2.png",
-        "assets/strip-3.png",
-        "assets/strip-4.png",
+        "assets/elektroni/page-1.webp",
+        "assets/elektroni/page-2.webp",
+        "assets/elektroni/page-3.webp",
+        "assets/elektroni/page-4.webp",
       ],
     },
   },

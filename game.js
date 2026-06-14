@@ -64,7 +64,7 @@ const sfx = {
 const stripPages = [];
 for (let i = 1; i <= 4; i++) {
   const img = new Image();
-  img.src = `assets/strip-${i}.png`;
+  img.src = `assets/elektroni/page-${i}.webp`;
   stripPages.push(img);
 }
 
