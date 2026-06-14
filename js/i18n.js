@@ -33,6 +33,8 @@
       game_hint:     'Tipke: <b>↑ ↓</b> ali <b>W / S</b> za gor-dol &nbsp;•&nbsp; <b>Preslednica</b> = strela &nbsp;•&nbsp; <b>M</b> = super moč (ko je polna) &nbsp;•&nbsp; na telefonu: <b>tapni</b> za strelo, <b>drsaj</b> za premik<br />💡 Poberi <b>3 elektrike</b> in dobiš nazaj <b>eno življenje</b> ❤️',
       rk_title:      "🐟 Ribji klofut 🐟",
       rk_hint:       'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za plavanje &nbsp;•&nbsp; <b>Preslednica</b> = mehurček &nbsp;•&nbsp; <b>M</b> = klofuta z repom &nbsp;•&nbsp; na telefonu: <b>drsaj</b> za plavanje, <b>tapni</b> za mehurček, <b>dvojni tap</b> za rep<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikansko ribo!',
+      k_title:       "🥕 Noč strašnih korenčkov 🐱",
+      k_hint:        'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za hojo &nbsp;•&nbsp; <b>Preslednica</b> = krempljček &nbsp;•&nbsp; <b>M</b> = ugriz &nbsp;•&nbsp; na telefonu: <b>drsaj</b> za hojo, <b>tapni</b> za krempelj, <b>dvojni tap</b> za ugriz<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikanski korenček!',
     },
     en: {
       site_title:    "Action for everyone",
@@ -59,6 +61,8 @@
       game_hint:     'Keys: <b>↑ ↓</b> or <b>W / S</b> to move &nbsp;•&nbsp; <b>Space</b> = shoot &nbsp;•&nbsp; <b>M</b> = super power (when charged) &nbsp;•&nbsp; on phone: <b>tap</b> to shoot, <b>swipe</b> to move<br />💡 Collect <b>3 electricities</b> to get back <b>one life</b> ❤️',
       rk_title:      "🐟 Fish Slap 🐟",
       rk_hint:       'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to swim &nbsp;•&nbsp; <b>Space</b> = bubble &nbsp;•&nbsp; <b>M</b> = tail slap &nbsp;•&nbsp; on phone: <b>swipe</b> to swim, <b>tap</b> for bubble, <b>double-tap</b> for tail<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant fish!',
+      k_title:       "🥕 Night of the Scary Carrots 🐱",
+      k_hint:        'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to walk &nbsp;•&nbsp; <b>Space</b> = claw &nbsp;•&nbsp; <b>M</b> = bite &nbsp;•&nbsp; on phone: <b>swipe</b> to walk, <b>tap</b> for claw, <b>double-tap</b> to bite<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant carrot!',
     },
   };
 

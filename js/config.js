@@ -90,6 +90,18 @@ const SITE = {
       comic: "ribji-klofut",
       game: "games/ribji-klofut.html",
     },
+    {
+      id: "korencki",
+      author: "jakob",
+      cover: "assets/korencki/cover.webp",
+      title: { sl: "Noč strašnih korenčkov", en: "Night of the Scary Carrots" },
+      blurb: {
+        sl: "Korenčki so oživeli kot netopirji in napadli mesto! Ti si super mucek — streljaj krempljčke, grizi in jih ustavi.",
+        en: "The carrots came alive as bats and attacked the city! You are Super Kitty — shoot claws, bite, and stop them.",
+      },
+      comic: "korencki",
+      game: "games/korencki.html",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
@@ -109,6 +121,17 @@ const SITE = {
       title: { sl: "Ribji klofut", en: "Fish Slap" },
       pages: [
         "assets/ribji-klofut/page-1.webp",
+      ],
+    },
+    korencki: {
+      author: "jakob",
+      title: { sl: "Noč strašnih korenčkov", en: "Night of the Scary Carrots" },
+      pages: [
+        "assets/korencki/page-1.webp",
+        "assets/korencki/page-2.webp",
+        "assets/korencki/page-3.webp",
+        "assets/korencki/page-4.webp",
+        "assets/korencki/page-5.webp",
       ],
     },
   },
