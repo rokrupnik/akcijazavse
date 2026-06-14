@@ -573,7 +573,7 @@ function drawParticles() {
   ctx.globalAlpha = 1;
 }
 function drawFloatTexts() {
-  floatTexts.forEach((t) => { ctx.globalAlpha = Math.min(1, t.t / 18); ctx.fillStyle = t.c; ctx.textAlign = "center"; ctx.font = `bold ${t.size}px "Comic Sans MS", sans-serif`; ctx.fillText(t.text, t.x, t.y); });
+  floatTexts.forEach((t) => { ctx.globalAlpha = Math.min(1, t.t / 18); ctx.fillStyle = t.c; ctx.textAlign = "center"; ctx.font = `bold ${t.size}px "Baloo 2", sans-serif`; ctx.fillText(t.text, t.x, t.y); });
   ctx.globalAlpha = 1;
 }
 
@@ -605,36 +605,36 @@ function drawHUD() {
 function panel(title, lines, footer) {
   ctx.fillStyle = "rgba(253,253,247,0.92)"; ctx.fillRect(0, 0, W, H);
   ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "center";
-  ctx.font = 'bold 40px "Comic Sans MS", sans-serif'; ctx.fillText(title, W / 2, 130);
-  ctx.font = '20px "Comic Sans MS", sans-serif';
+  ctx.font = 'bold 40px "Baloo 2", sans-serif'; ctx.fillText(title, W / 2, 130);
+  ctx.font = '20px "Baloo 2", sans-serif';
   lines.forEach((l, i) => ctx.fillText(l, W / 2, 200 + i * 36));
-  if (footer) { ctx.fillStyle = "#0a6cc2"; ctx.font = 'bold 22px "Comic Sans MS", sans-serif'; ctx.fillText(footer, W / 2, H - 70 + 4 * Math.sin(frame * 0.1)); }
+  if (footer) { ctx.fillStyle = "#0a6cc2"; ctx.font = 'bold 22px "Baloo 2", sans-serif'; ctx.fillText(footer, W / 2, H - 70 + 4 * Math.sin(frame * 0.1)); }
 }
 function drawIntro() {
   clearWater();
   drawFish(W * 0.72, H / 2, 40, 1, 0, "#ffb13b", "#ffe2a8", frame * 0.2, false);
   ctx.fillStyle = "#06324a"; ctx.textAlign = "left";
-  ctx.font = 'bold 46px "Comic Sans MS", sans-serif'; ctx.fillText(G.introTitle, 60, 150);
-  ctx.font = 'bold 28px "Comic Sans MS", sans-serif'; ctx.fillText(G.introSub, 60, 192);
-  ctx.font = '18px "Comic Sans MS", sans-serif'; ctx.fillStyle = "#0b3d57";
+  ctx.font = 'bold 46px "Baloo 2", sans-serif'; ctx.fillText(G.introTitle, 60, 150);
+  ctx.font = 'bold 28px "Baloo 2", sans-serif'; ctx.fillText(G.introSub, 60, 192);
+  ctx.font = '18px "Baloo 2", sans-serif'; ctx.fillStyle = "#0b3d57";
   ctx.fillText(G.introL1, 60, 256); ctx.fillText(G.introL2, 60, 284); ctx.fillText(G.introL3, 60, 312);
-  ctx.fillStyle = "#fff"; ctx.font = 'bold 22px "Comic Sans MS", sans-serif';
+  ctx.fillStyle = "#fff"; ctx.font = 'bold 22px "Baloo 2", sans-serif';
   ctx.fillText(G.introStart, 60, 400 + 4 * Math.sin(frame * 0.1));
 }
 function drawSelect() {
   clearWater();
   ctx.fillStyle = "#06324a"; ctx.textAlign = "center";
-  ctx.font = 'bold 40px "Comic Sans MS", sans-serif'; ctx.fillText(G.selectTitle, W / 2, 120);
-  ctx.font = '17px "Comic Sans MS", sans-serif'; ctx.fillStyle = "#0b3d57";
+  ctx.font = 'bold 40px "Baloo 2", sans-serif'; ctx.fillText(G.selectTitle, W / 2, 120);
+  ctx.font = '17px "Baloo 2", sans-serif'; ctx.fillStyle = "#0b3d57";
   ctx.fillText(G.selectHint, W / 2, 160);
   const bw = 460, bh = 80, bx = (W - bw) / 2;
   DIFFICULTIES.forEach((d, i) => {
     const by = 200 + i * 95; const sel = i === diffIndex;
     ctx.fillStyle = sel ? "#fff3c4" : "#fdfdf7"; ctx.strokeStyle = sel ? "#0a6cc2" : "#2b2b2b"; ctx.lineWidth = sel ? 5 : 3;
     roundRect(bx, by, bw, bh, 14); ctx.fill(); ctx.stroke();
-    ctx.textAlign = "left"; ctx.fillStyle = "#1a1a1a"; ctx.font = 'bold 28px "Comic Sans MS", sans-serif';
+    ctx.textAlign = "left"; ctx.fillStyle = "#1a1a1a"; ctx.font = 'bold 28px "Baloo 2", sans-serif';
     ctx.fillText((i + 1) + ". " + G.diffNames[i], bx + 24, by + 36);
-    ctx.fillStyle = "#555"; ctx.font = '16px "Comic Sans MS", sans-serif'; ctx.fillText(G.diffDescs[i], bx + 24, by + 62);
+    ctx.fillStyle = "#555"; ctx.font = '16px "Baloo 2", sans-serif'; ctx.fillText(G.diffDescs[i], bx + 24, by + 62);
     ctx.fillStyle = "#e23b3b"; ctx.textAlign = "right"; ctx.font = '20px sans-serif'; ctx.fillText("♥".repeat(d.hp), bx + bw - 20, by + 48);
   });
   ctx.textAlign = "center";
@@ -644,9 +644,9 @@ function drawStory() {
   const tw = W * 0.7, tx = (W - tw) / 2;
   ctx.fillStyle = "#fff"; ctx.strokeStyle = "#2b2b2b"; ctx.lineWidth = 3;
   roundRect(tx, H / 2 - 110, tw, 200, 16); ctx.fill(); ctx.stroke();
-  ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "center"; ctx.font = '24px "Comic Sans MS", sans-serif';
+  ctx.fillStyle = "#1a1a1a"; ctx.textAlign = "center"; ctx.font = '24px "Baloo 2", sans-serif';
   wrapText(G.story[storyPage], W / 2, H / 2 - 40, tw - 60, 34);
-  ctx.fillStyle = "#0a6cc2"; ctx.font = 'bold 18px "Comic Sans MS", sans-serif';
+  ctx.fillStyle = "#0a6cc2"; ctx.font = 'bold 18px "Baloo 2", sans-serif';
   ctx.fillText(G.storyNext, W / 2, H / 2 + 70);
 }
 function roundRect(x, y, w, h, r) {
@@ -681,7 +681,7 @@ function render() {
 
   drawHUD();
   if (bossWarn > 0 && Math.floor(frame / 8) % 2 === 0) {
-    ctx.fillStyle = "#ff3b3b"; ctx.textAlign = "center"; ctx.font = 'bold 30px "Comic Sans MS", sans-serif';
+    ctx.fillStyle = "#ff3b3b"; ctx.textAlign = "center"; ctx.font = 'bold 30px "Baloo 2", sans-serif';
     ctx.fillText(G.bossWarn, W / 2, H / 2);
   }
 
