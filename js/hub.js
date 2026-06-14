@@ -40,7 +40,8 @@
   function renderStories() {
     const box = document.getElementById("stories");
     box.innerHTML = "";
-    SITE.stories.forEach((s) => {
+    // obrnjen vrstni red: nazadnje dodane zgodbe se pokažejo prve
+    [...SITE.stories].reverse().forEach((s) => {
       const card = document.createElement("div");
       card.className = "story-card";
       const author = SITE.authors[s.author];
