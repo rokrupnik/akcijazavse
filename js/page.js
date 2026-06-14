@@ -42,6 +42,18 @@
       a.textContent = o.label;
       links.appendChild(a);
     });
+    if (d.flik) {
+      const f = document.createElement("div");
+      f.className = "donate-flik";
+      f.textContent = "🟢 Flik PLAČAJ: " + d.flik;
+      links.appendChild(f);
+    }
     document.getElementById("donate-bank").textContent = d.bank[L()] || d.bank.sl;
+    const qrBox = document.getElementById("donate-qr");
+    if (qrBox && d.qr) {
+      const base = location.pathname.includes("/games/") ? "../" : "";
+      const label = L() === "en" ? "Or scan in your bank app:" : "Ali skeniraj v aplikaciji banke:";
+      qrBox.innerHTML = '<p class="qr-label">' + label + '</p><img class="donate-qr" src="' + base + d.qr + '" alt="UPN QR" />';
+    }
   }
 })();

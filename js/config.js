@@ -19,10 +19,13 @@ const SITE = {
     kofi:   "",   // npr. "https://ko-fi.com/uporabnik"
     bmac:   "",   // npr. "https://buymeacoffee.com/uporabnik"
     stripe: "",   // Stripe Payment Link, npr. "https://buy.stripe.com/..."
+    flik:   "",   // Flik PLAČAJ: telefonska številka (npr. "+386 41 123 456"); prazno = se ne prikaže
     bank: {
-      sl: "Ime: (vaše ime)\nIBAN: SI56 XXXX XXXX XXXX XXX\nNamen: Podpora – Akcija za vse",
-      en: "Name: (your name)\nIBAN: SI56 XXXX XXXX XXXX XXX\nReference: Support – Action for everyone",
+      sl: "Ime: Rok Rupnik\nIBAN: SI56 0400 1010 4830 702\nNamen: Dar - Akcija za vse",
+      en: "Name: Rok Rupnik\nIBAN: SI56 0400 1010 4830 702\nReference: Dar - Akcija za vse",
     },
+    // QR (UPN) za slovenske banke – ustvarjen iz zgornjega TRR-ja (assets/qr-upn.png)
+    qr: "assets/qr-upn.png",
   },
 
   /* ---- AVTORJI ----
@@ -32,7 +35,7 @@ const SITE = {
   authors: {
     simon: {
       name: "Simon",
-      photo: "assets/avtor-simon.jpg",
+      photo: "assets/authors/simon.webp",
       bio: {
         sl: "Avtor igre Elektroni in mnogih zgodb. Ima res bujno domišljijo.",
         en: "Author of the game Electrons and many stories. Has a wild imagination.",
@@ -40,7 +43,7 @@ const SITE = {
     },
     jakob: {
       name: "Jakob",
-      photo: "assets/avtor-jakob.jpg",
+      photo: "assets/authors/jakob.webp",
       bio: {
         sl: "Rad riše korenčke in napete stripe ter je čokolado.",
         en: "Likes drawing carrots and exciting comics, and eating chocolate.",
@@ -48,7 +51,7 @@ const SITE = {
     },
     andrej: {
       name: "Andrej",
-      photo: "assets/avtor-andrej.jpg",
+      photo: "assets/authors/andrej.webp",
       bio: {
         sl: "Rad se kdaj razjezi in strga liste, ampak naredi tudi nove.",
         en: "Sometimes gets angry and tears up the pages, but makes new ones too.",
