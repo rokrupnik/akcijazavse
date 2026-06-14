@@ -1,0 +1,93 @@
+/* ===========================================================
+   NASTAVITVE STRANI  (to datoteko mirno urejajte sami)
+   - donate:  povezave za donacije
+   - authors: avtorji (Simon / Jakob / Andrej) — slika + opis
+   - stories: zgodbe (igra ali strip); vsaka ima svojega avtorja
+   - comics:  strani stripov za bralnik (strip.html)
+
+   KAKO DODATI NOVO ZGODBO:
+   1) (strip) dodaj strani v "comics" pod nov ID
+   2) dodaj vnos v "stories" z author: "simon" | "jakob" | "andrej"
+   Nič drugega ni treba spreminjati.
+   =========================================================== */
+
+const SITE = {
+  /* ---- DONACIJE ----
+     Prazno ("") = gumb se ne prikaže. Ko dobite povezavo, jo prilepite. */
+  donate: {
+    paypal: "",   // npr. "https://paypal.me/uporabnik"
+    kofi:   "",   // npr. "https://ko-fi.com/uporabnik"
+    bmac:   "",   // npr. "https://buymeacoffee.com/uporabnik"
+    stripe: "",   // Stripe Payment Link, npr. "https://buy.stripe.com/..."
+    bank: {
+      sl: "Ime: (vaše ime)\nIBAN: SI56 XXXX XXXX XXXX XXX\nNamen: Podpora – Akcija za vse",
+      en: "Name: (your name)\nIBAN: SI56 XXXX XXXX XXXX XXX\nReference: Support – Action for everyone",
+    },
+  },
+
+  /* ---- AVTORJI ----
+     photo: pot do slike (npr. "assets/avtor-simon.jpg").
+            Če slike (še) ni, se pokaže začetnica imena.
+     bio:   kratek opis v SL / EN. */
+  authors: {
+    simon: {
+      name: "Simon",
+      photo: "assets/avtor-simon.jpg",
+      bio: {
+        sl: "Avtor igre Elektroni in mnogih zgodb. Ima res bujno domišljijo.",
+        en: "Author of the game Electrons and many stories. Has a wild imagination.",
+      },
+    },
+    jakob: {
+      name: "Jakob",
+      photo: "assets/avtor-jakob.jpg",
+      bio: {
+        sl: "Rad riše korenčke in napete stripe ter je čokolado.",
+        en: "Likes drawing carrots and exciting comics, and eating chocolate.",
+      },
+    },
+    andrej: {
+      name: "Andrej",
+      photo: "assets/avtor-andrej.jpg",
+      bio: {
+        sl: "Rad se kdaj razjezi in strga liste, ampak naredi tudi nove.",
+        en: "Sometimes gets angry and tears up the pages, but makes new ones too.",
+      },
+    },
+  },
+
+  /* ---- ZGODBE NA DOMAČI STRANI ----
+     Ena kartica = ena zgodba. Lahko ima igro in/ali strip:
+       game:  pot do igre (npr. "game.html")  -> gumb "Igraj"
+       comic: ID stripa iz "comics" spodaj     -> gumb "Beri strip"
+     Navedi eno, drugo ali oboje.
+     author: "simon" | "jakob" | "andrej" */
+  stories: [
+    {
+      id: "elektroni",
+      author: "simon",
+      cover: "assets/strip-1.png",
+      title: { sl: "Elektroni: strah v rokah", en: "Electrons: fear in their hands" },
+      blurb: {
+        sl: "Ti si elektron – prijazni hrček s strelami. Premagaj zlobne hrčke in velikega hrčka!",
+        en: "You are an electron – a friendly hamster with lightning. Beat the evil hamsters and the big hamster!",
+      },
+      game: "game.html",
+      comic: "elektroni",
+    },
+  ],
+
+  /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
+  comics: {
+    elektroni: {
+      author: "simon",
+      title: { sl: "Elektroni – strip", en: "Electrons – comic" },
+      pages: [
+        "assets/strip-1.png",
+        "assets/strip-2.png",
+        "assets/strip-3.png",
+        "assets/strip-4.png",
+      ],
+    },
+  },
+};

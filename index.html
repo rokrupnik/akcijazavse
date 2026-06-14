@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="sl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title data-i18n-doctitle="site_title">Akcija za vse</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <header class="site-header">
+    <a class="brand" href="index.html">
+      <span class="brand-mark">⚡</span>
+      <span class="brand-name" data-i18n="site_title">Akcija za vse</span>
+    </a>
+    <div class="header-actions">
+      <button id="lang-btn" class="lang-btn" title="Jezik / Language">EN</button>
+      <button class="donate-btn" data-open-donate data-i18n="nav_donate">Doniraj ♥</button>
+    </div>
+  </header>
+
+  <main class="hub">
+    <section class="hero">
+      <h1 data-i18n="site_title">Akcija za vse</h1>
+      <p class="tagline" data-i18n="site_tagline">Igre in stripi, ki jih ustvarjamo bratje.</p>
+    </section>
+
+    <section class="block">
+      <h2 data-i18n="team_heading">Naša ekipa</h2>
+      <div id="team" class="team-grid"></div>
+    </section>
+
+    <section class="block">
+      <h2 data-i18n="stories_heading">Izberi zgodbo</h2>
+      <div id="stories" class="stories-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <button class="donate-btn big" data-open-donate data-i18n="nav_donate">Doniraj ♥</button>
+    <p data-i18n="footer_made">Naredili bratje · za zabavo in učenje</p>
+  </footer>
+
+  <!-- okno za donacije -->
+  <div id="donate-modal" class="modal">
+    <div class="modal-box">
+      <button class="modal-x" data-close-donate aria-label="x">✕</button>
+      <h2 data-i18n="donate_heading">Podpri ekipo ♥</h2>
+      <p data-i18n="donate_text">Igre in stripe delamo trije bratje. Hvala za podporo!</p>
+      <div id="donate-links" class="donate-links"></div>
+      <h3 data-i18n="donate_bank_heading">Ali nakaži na račun:</h3>
+      <pre id="donate-bank" class="donate-bank"></pre>
+      <button class="ghost-btn" data-close-donate data-i18n="donate_close">Zapri</button>
+    </div>
+  </div>
+
+  <script src="js/config.js"></script>
+  <script src="js/i18n.js"></script>
+  <script src="js/hub.js"></script>
+</body>
+</html>

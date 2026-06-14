@@ -1,0 +1,363 @@
+/* Slog stripa: bel karo papir, svinčnik. */
+* { box-sizing: border-box; }
+
+html, body {
+  margin: 0;
+  padding: 0;
+  background: #d9d6cf;
+  font-family: "Comic Sans MS", "Marker Felt", "Segoe Print", cursive, sans-serif;
+  color: #2b2b2b;
+  -webkit-text-size-adjust: 100%;
+}
+
+#wrap {
+  max-width: 940px;
+  margin: 0 auto;
+  padding: 12px;
+  text-align: center;
+}
+
+#game-title {
+  font-size: clamp(20px, 4.5vw, 34px);
+  margin: 8px 0 12px;
+  color: #1a1a1a;
+  text-shadow: 1px 1px 0 #b9e3ff;
+  letter-spacing: 1px;
+}
+
+#stage {
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  margin: 0 auto;
+  border: 3px solid #2b2b2b;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 4px 6px 0 rgba(0,0,0,0.25);
+  background: #fdfdf7;
+}
+
+canvas#game {
+  display: block;
+  width: 100%;
+  height: auto;
+  touch-action: none;
+}
+
+#hint {
+  font-size: clamp(11px, 2.5vw, 14px);
+  color: #444;
+  margin: 12px 6px 4px;
+  line-height: 1.7;
+}
+
+#hint b { color: #0a6cc2; }
+
+/* =========================================================
+   SKUPNA GLAVA
+   ========================================================= */
+.site-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  max-width: 980px;
+  margin: 0 auto;
+  padding: 10px 14px;
+}
+.brand {
+  display: flex; align-items: center; gap: 8px;
+  text-decoration: none; color: #1a1a1a;
+}
+.brand-mark { font-size: 26px; }
+.brand-name { font-weight: bold; font-size: clamp(16px, 3.5vw, 22px); letter-spacing: 1px; }
+.header-actions { display: flex; align-items: center; gap: 8px; }
+
+.lang-btn {
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  border: 3px solid #2b2b2b;
+  background: #fff;
+  color: #1a1a1a;
+  border-radius: 10px;
+  padding: 6px 12px;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.2);
+}
+.lang-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.2); }
+
+.donate-btn {
+  font-family: inherit;
+  font-weight: bold;
+  cursor: pointer;
+  border: 3px solid #2b2b2b;
+  background: #ffd400;
+  color: #1a1a1a;
+  border-radius: 10px;
+  padding: 6px 14px;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.25);
+}
+.donate-btn:active { transform: translate(1px, 1px); box-shadow: 1px 1px 0 rgba(0,0,0,0.25); }
+.donate-btn.big { font-size: 20px; padding: 12px 26px; }
+
+.back-link {
+  display: inline-block;
+  margin: 6px 0 4px;
+  color: #0a6cc2;
+  text-decoration: none;
+  font-weight: bold;
+}
+.back-link:hover { text-decoration: underline; }
+
+/* =========================================================
+   DOMAČA STRAN (hub)
+   ========================================================= */
+.hub { max-width: 980px; margin: 0 auto; padding: 0 14px 40px; }
+.hero { text-align: center; margin: 18px 0 28px; }
+.hero h1 {
+  font-size: clamp(28px, 7vw, 54px);
+  margin: 6px 0;
+  text-shadow: 2px 2px 0 #b9e3ff;
+  letter-spacing: 1px;
+}
+.tagline { font-size: clamp(14px, 3vw, 19px); color: #444; margin: 0; }
+
+.block { margin: 26px 0; }
+.block h2 {
+  text-align: center;
+  font-size: clamp(20px, 4.5vw, 30px);
+  margin: 0 0 16px;
+  color: #1a1a1a;
+}
+
+.team-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 14px;
+}
+.member {
+  background: #fdfdf7;
+  border: 3px solid #2b2b2b;
+  border-radius: 14px;
+  box-shadow: 3px 4px 0 rgba(0,0,0,0.2);
+  padding: 18px 18px 16px;
+  text-align: center;
+  width: 200px;
+}
+.member-photo {
+  position: relative;
+  width: 96px;
+  height: 96px;
+  margin: 0 auto 10px;
+  border: 3px solid #2b2b2b;
+  border-radius: 50%;
+  overflow: hidden;
+  background: #e9e6df;
+}
+.member-photo img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.member-initial {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 44px;
+  font-weight: bold;
+  color: #9a958b;
+}
+.member-name { font-weight: bold; font-size: 19px; }
+.member-bio { font-size: 13px; color: #555; margin-top: 6px; line-height: 1.4; }
+
+.stories-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 18px;
+}
+.story-card {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: #1a1a1a;
+  background: #fdfdf7;
+  border: 3px solid #2b2b2b;
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 4px 5px 0 rgba(0,0,0,0.22);
+  transition: transform .08s ease;
+}
+.story-card:hover { transform: translate(-1px, -2px); }
+.story-card:active { transform: translate(1px, 2px); }
+.story-cover {
+  position: relative;
+  height: 150px;
+  background-color: #e9e6df;
+  background-size: cover;
+  background-position: center top;
+  border-bottom: 3px solid #2b2b2b;
+}
+.story-badges {
+  position: absolute; top: 8px; left: 8px;
+  display: flex; gap: 6px;
+}
+.story-badge {
+  background: #ffd400;
+  border: 2px solid #2b2b2b;
+  border-radius: 8px;
+  font-size: 12px; font-weight: bold;
+  padding: 2px 8px;
+}
+.story-body { padding: 12px 14px 16px; display: flex; flex-direction: column; flex: 1; }
+.story-title { margin: 0 0 2px; font-size: 19px; }
+.story-author { font-size: 13px; color: #777; margin: 0 0 8px; }
+.story-author b { color: #0a6cc2; }
+.story-blurb { margin: 0 0 12px; font-size: 14px; color: #555; line-height: 1.4; flex: 1; }
+.story-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+.story-btn {
+  text-decoration: none;
+  color: #fff;
+  border-radius: 10px;
+  padding: 8px 16px;
+  font-weight: bold;
+}
+.story-btn.play { background: #0a6cc2; border: 2px solid #08538f; }
+.story-btn.read { background: #2e9e5b; border: 2px solid #227a45; }
+.story-btn:active { transform: translate(1px, 1px); }
+
+.story-card.soon {
+  align-items: center;
+  justify-content: center;
+  background: repeating-linear-gradient(45deg, #f2efe8, #f2efe8 12px, #e9e6df 12px, #e9e6df 24px);
+  border-style: dashed;
+  min-height: 220px;
+  box-shadow: none;
+}
+.soon-inner { text-align: center; color: #777; font-weight: bold; }
+.soon-inner span { display: block; margin-top: 6px; }
+
+/* =========================================================
+   NOGA
+   ========================================================= */
+.site-footer { text-align: center; padding: 24px 14px 40px; }
+.site-footer p { color: #666; font-size: 13px; margin-top: 14px; }
+
+/* =========================================================
+   DONACIJSKO OKNO
+   ========================================================= */
+.modal {
+  display: none;
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.45);
+  z-index: 50;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+.modal.open { display: flex; }
+.modal-box {
+  position: relative;
+  background: #fdfdf7;
+  border: 3px solid #2b2b2b;
+  border-radius: 16px;
+  box-shadow: 6px 8px 0 rgba(0,0,0,0.3);
+  max-width: 420px;
+  width: 100%;
+  padding: 22px 22px 26px;
+  text-align: center;
+}
+.modal-box h2 { margin: 0 0 10px; }
+.modal-box p { color: #444; line-height: 1.5; }
+.modal-x {
+  position: absolute; top: 8px; right: 10px;
+  border: none; background: none; cursor: pointer;
+  font-size: 20px; color: #777;
+}
+.donate-links { display: flex; flex-direction: column; gap: 10px; margin: 16px 0; }
+.donate-link {
+  text-decoration: none;
+  background: #ffd400;
+  border: 3px solid #2b2b2b;
+  border-radius: 12px;
+  color: #1a1a1a;
+  font-weight: bold;
+  padding: 12px;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.22);
+}
+.donate-link:active { transform: translate(1px,1px); }
+.donate-bank {
+  text-align: left;
+  background: #fff;
+  border: 2px dashed #2b2b2b;
+  border-radius: 10px;
+  padding: 12px;
+  font-family: "Courier New", monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+  word-break: break-word;
+  margin: 6px 0 18px;
+}
+.ghost-btn {
+  font-family: inherit;
+  cursor: pointer;
+  border: 3px solid #2b2b2b;
+  background: #fff;
+  border-radius: 10px;
+  padding: 8px 18px;
+  font-weight: bold;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.18);
+}
+.ghost-btn:disabled { opacity: 0.4; cursor: default; box-shadow: none; }
+
+/* =========================================================
+   STRIP BRALNIK
+   ========================================================= */
+.reader { max-width: 760px; margin: 0 auto; padding: 0 14px 40px; text-align: center; }
+.reader-title { font-size: clamp(20px, 5vw, 30px); margin: 8px 0 2px; }
+.reader-author { color: #777; margin: 0 0 14px; font-size: 14px; }
+.reader-stage {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.comic-page {
+  max-width: 100%;
+  max-height: 75vh;
+  border: 3px solid #2b2b2b;
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: 4px 6px 0 rgba(0,0,0,0.25);
+}
+.nav-arrow {
+  position: absolute;
+  top: 50%; transform: translateY(-50%);
+  border: 3px solid #2b2b2b;
+  background: rgba(255,255,255,0.9);
+  border-radius: 50%;
+  width: 48px; height: 48px;
+  font-size: 26px; font-weight: bold;
+  cursor: pointer;
+  box-shadow: 2px 3px 0 rgba(0,0,0,0.22);
+}
+.nav-arrow.left { left: 6px; }
+.nav-arrow.right { right: 6px; }
+.nav-arrow.disabled { opacity: 0.25; pointer-events: none; }
+.reader-controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  margin-top: 16px;
+}
+.page-ind { font-weight: bold; color: #444; min-width: 70px; }
+
+@media (max-width: 480px) {
+  .nav-arrow { width: 40px; height: 40px; font-size: 22px; }
+  .member { width: 44%; }
+}
