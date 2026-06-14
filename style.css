@@ -471,6 +471,27 @@ canvas#game {
 .game-btn.secondary { width: 58px; height: 58px; border-radius: 50%; font-size: 26px; background: rgba(226,59,59,0.55); }
 .game-btn:active { transform: scale(0.92); }
 
+/* joystick za premik (spodaj levo) — samo na dotik napravah */
+.joystick {
+  display: none;
+  position: absolute; left: 14px; bottom: 14px;
+  width: 120px; height: 120px; border-radius: 50%;
+  background: rgba(0,0,0,0.28); border: 3px solid rgba(255,255,255,0.55);
+  touch-action: none; z-index: 5;
+}
+@media (pointer: coarse) { .joystick { display: block; } }
+.joystick-knob {
+  position: absolute; left: 50%; top: 50%;
+  width: 54px; height: 54px; margin: -27px 0 0 -27px; border-radius: 50%;
+  background: rgba(255,255,255,0.55); border: 2px solid rgba(255,255,255,0.85);
+}
+.joy-arrow { position: absolute; color: rgba(255,255,255,0.7); font-size: 15px; line-height: 1; }
+.joy-arrow.up { top: 5px; left: 50%; transform: translateX(-50%); }
+.joy-arrow.down { bottom: 5px; left: 50%; transform: translateX(-50%); }
+.joy-arrow.left { left: 7px; top: 50%; transform: translateY(-50%); }
+.joy-arrow.right { right: 7px; top: 50%; transform: translateY(-50%); }
+.joystick.vertical .joy-arrow.left, .joystick.vertical .joy-arrow.right { display: none; }
+
 /* gumb za celozaslonsko (pod canvasom) */
 .fs-enter { display: inline-block; margin-top: 12px; }
 

@@ -70,6 +70,37 @@
     controls.appendChild(btnPrimary);
     stage.appendChild(controls);
 
+    // joystick za premik (spodaj levo) — CSS ga pokaže le na dotik napravah
+    const joyBase = document.createElement("div");
+    joyBase.className = "joystick";
+    joyBase.innerHTML =
+      '<span class="joy-arrow up">▲</span><span class="joy-arrow down">▼</span>' +
+      '<span class="joy-arrow left">◀</span><span class="joy-arrow right">▶</span>' +
+      '<div class="joystick-knob"></div>';
+    stage.appendChild(joyBase);
+    const knob = joyBase.querySelector(".joystick-knob");
+    const joy = { x: 0, y: 0, active: false };
+    window.azvJoystick = joy;
+    let joyAxis = "both";
+    const JOY_R = 38;
+    function joySet(dx, dy) { knob.style.transform = "translate(" + dx + "px," + dy + "px)"; }
+    function joyMove(e) {
+      const r = joyBase.getBoundingClientRect();
+      const cx = r.left + r.width / 2, cy = r.top + r.height / 2;
+      let dx = e.clientX - cx, dy = e.clientY - cy;
+      if (joyAxis === "vertical") dx = 0;
+      const dist = Math.hypot(dx, dy) || 1;
+      const cl = Math.min(dist, JOY_R);
+      const nx = dx / dist * cl, ny = dy / dist * cl;
+      joySet(nx, ny);
+      joy.x = joyAxis === "vertical" ? 0 : nx / JOY_R;
+      joy.y = ny / JOY_R;
+    }
+    function joyEnd() { joy.active = false; joy.x = 0; joy.y = 0; joySet(0, 0); }
+    joyBase.addEventListener("pointerdown", (e) => { e.preventDefault(); joy.active = true; try { joyBase.setPointerCapture(e.pointerId); } catch (x) {} joyMove(e); });
+    joyBase.addEventListener("pointermove", (e) => { if (joy.active) joyMove(e); });
+    ["pointerup", "pointercancel"].forEach((ev) => joyBase.addEventListener(ev, joyEnd));
+
     // izhod iz celozaslonskega (zgoraj desno)
     const exitBtn = document.createElement("button");
     exitBtn.className = "fs-exit"; exitBtn.type = "button"; exitBtn.textContent = "✕";
@@ -88,6 +119,8 @@
       prim = c.primary; sec = c.secondary;
       if (c.primaryLabel) btnPrimary.textContent = c.primaryLabel;
       if (c.secondaryLabel) btnSecondary.textContent = c.secondaryLabel;
+      joyAxis = c.axis || "both";
+      if (joyAxis === "vertical") joyBase.classList.add("vertical");
     };
 
     // primarni gumb: drži za samodejno streljanje

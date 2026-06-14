@@ -230,22 +230,11 @@ function pointerDown(e) {
   }
   if (state === STATE.STORY) { storyPage++; if (storyPage >= G.story.length) startGame(); return; }
   if (state === STATE.WIN || state === STATE.LOSE) { tryLeaveEnd(); return; }
-  if (state === STATE.PLAY) {
-    const p = canvasPos(e);
-    // ciljaj v smer tapa
-    aimAt(p.x, p.y);
-    // dvojni tap = klofuta z repom, sicer mehurček
-    const now = frame;
-    if (now - lastTapAt < 18) { slash(); } else { shoot(); }
-    lastTapAt = now;
-    // na mobilnih plavaj proti tapu
-    if (isMobileScreen()) moveTarget = { x: p.x, y: p.y };
-  }
+  // med igro tapkanje po platnu ne sproži ničesar:
+  // premik = joystick (spodaj levo), moči = gumba (spodaj desno).
 }
-function pointerMove(e) {
-  if (state === STATE.PLAY && e.touches && isMobileScreen()) { e.preventDefault(); moveTarget = canvasPos(e); }
-}
-function pointerUp() { moveTarget = null; }
+function pointerMove() {}
+function pointerUp() {}
 canvas.addEventListener("mousedown", pointerDown);
 canvas.addEventListener("touchstart", pointerDown, { passive: false });
 canvas.addEventListener("touchmove", pointerMove, { passive: false });
@@ -385,11 +374,12 @@ function update() {
     player.fx = dx / d; player.fy = dy / d;
     tryMove(player, (dx / d) * player.speed, (dy / d) * player.speed);
   }
-  /* premik proti tapu (mobilno) */
-  if (moveTarget) {
-    const mx = moveTarget.x - player.x, my = moveTarget.y - player.y;
-    const md = Math.hypot(mx, my);
-    if (md > 6) { player.fx = mx / md; player.fy = my / md; tryMove(player, (mx / md) * player.speed, (my / md) * player.speed); }
+  /* premik z joystickom (mobilno) */
+  const joy = window.azvJoystick;
+  if (joy && joy.active && (joy.x || joy.y)) {
+    const jd = Math.hypot(joy.x, joy.y) || 1;
+    player.fx = joy.x / jd; player.fy = joy.y / jd;
+    tryMove(player, joy.x * player.speed, joy.y * player.speed);
   }
   /* streljanje s tipko (drži preslednico) */
   if (keys[" "]) shoot();
@@ -709,7 +699,7 @@ loop();
 if (window.azvRegisterControls) {
   window.azvRegisterControls({
     primary: () => { initAudio(); if (state === STATE.PLAY) shoot(); },
-    secondary: () => { initAudio(); if (state === STATE.PLAY) bite(); },
-    primaryLabel: "💧", secondaryLabel: "🌀",
+    secondary: () => { initAudio(); if (state === STATE.PLAY) slash(); },
+    primaryLabel: "💧", secondaryLabel: "🌀", axis: "both",
   });
 }

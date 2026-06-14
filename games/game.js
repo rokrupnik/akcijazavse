@@ -252,19 +252,11 @@ function pointerDown(e) {
   }
   if (state === STATE.STORY) { storyPage++; if (storyPage >= STORY.length) startGame(); return; }
   if (state === STATE.WIN || state === STATE.LOSE) { tryLeaveEnd(); return; }
-  if (state === STATE.PLAY) {
-    // Premikanje s klikom/dotikom samo na mobilnih zaslonih; na velikih ostane le tipkovnica.
-    if (isMobileScreen()) {
-      const p = canvasPos(e);
-      touchTargetY = p.y;
-    }
-    shoot();
-  }
+  // med igro tapkanje po platnu ne sproži ničesar:
+  // premik = joystick (spodaj levo), moči = gumba (spodaj desno).
 }
-function pointerMove(e) {
-  if (state === STATE.PLAY && e.touches && isMobileScreen()) { e.preventDefault(); touchTargetY = canvasPos(e).y; }
-}
-function pointerUp() { touchTargetY = null; }
+function pointerMove() {}
+function pointerUp() {}
 canvas.addEventListener("mousedown", pointerDown);
 canvas.addEventListener("touchstart", pointerDown, { passive: false });
 canvas.addEventListener("touchmove", pointerMove, { passive: false });
@@ -398,10 +390,8 @@ function update() {
   /* premik igralca */
   if (keys["arrowup"] || keys["w"]) player.y -= player.speed;
   if (keys["arrowdown"] || keys["s"]) player.y += player.speed;
-  if (touchTargetY !== null) {
-    const dy = touchTargetY - player.y;
-    if (Math.abs(dy) > 4) player.y += Math.sign(dy) * Math.min(player.speed, Math.abs(dy));
-  }
+  const joy = window.azvJoystick;
+  if (joy && joy.active) player.y += joy.y * player.speed;
   player.y = Math.max(player.r + 6, Math.min(H - player.r - 6, player.y));
 
   /* streljanje s tipko */
@@ -740,8 +730,8 @@ function drawHUD() {
     ctx.bezierCurveTo(hx + 10, hy - 2, hx, hy, hx, hy + 6);
     ctx.fill();
   }
-  // lestvica super moči (se polni)
-  const bx = 20, by = 54, bw = 180, bh = 14;
+  // lestvica super moči (se polni) — pod srci, da se ne prekrivata
+  const bx = 20, by = 68, bw = 180, bh = 14;
   ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(bx, by, bw, bh);
   const frac = player.superCharge / player.maxSuper;
   ctx.fillStyle = frac >= 1 ? "#ffd400" : "#ff9b3b";
@@ -931,6 +921,6 @@ if (window.azvRegisterControls) {
   window.azvRegisterControls({
     primary: () => { initAudio(); if (state === STATE.PLAY) shoot(); },
     secondary: () => { initAudio(); if (state === STATE.PLAY) trySuper(); },
-    primaryLabel: "⚡", secondaryLabel: "💥",
+    primaryLabel: "⚡", secondaryLabel: "💥", axis: "vertical",
   });
 }
