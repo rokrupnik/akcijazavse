@@ -187,6 +187,9 @@ let bossSpawned = false;
 let boss = null;
 let frame = 0;
 let shake = 0;
+const END_DELAY = 3000;   // ms: po koncu igre toliko časa ne moreš naprej (da se vidi zaslon)
+let endAt = 0;
+let endScreen = null;
 
 /* ---------- vnos ---------- */
 const keys = {};
@@ -217,7 +220,7 @@ function handleAction(k) {
     if (storyPage >= STORY.length) startGame();
     return;
   }
-  if ((state === STATE.WIN || state === STATE.LOSE) && (k === " " || k === "enter")) { resetToIntro(); return; }
+  if ((state === STATE.WIN || state === STATE.LOSE) && (k === " " || k === "enter")) { tryLeaveEnd(); return; }
   if (state === STATE.PLAY && k === "m") trySuper();
 }
 
@@ -248,7 +251,7 @@ function pointerDown(e) {
     return;
   }
   if (state === STATE.STORY) { storyPage++; if (storyPage >= STORY.length) startGame(); return; }
-  if (state === STATE.WIN || state === STATE.LOSE) { resetToIntro(); return; }
+  if (state === STATE.WIN || state === STATE.LOSE) { tryLeaveEnd(); return; }
   if (state === STATE.PLAY) {
     // Premikanje s klikom/dotikom samo na mobilnih zaslonih; na velikih ostane le tipkovnica.
     if (isMobileScreen()) {
@@ -274,8 +277,10 @@ function startGame() {
   score = 0; orbCount = 0; spawnTimer = 0; orbTimer = 0; bossSpawned = false; boss = null; shake = 0;
   player.x = 110; player.y = H / 2; player.maxHp = diff.hp; player.hp = diff.hp; player.superCharge = 0;
   player.cooldown = 0; player.invuln = 60;
+  endScreen = null;
 }
 function resetToIntro() { state = STATE.INTRO; storyPage = 0; }
+function tryLeaveEnd() { if (performance.now() - endAt < END_DELAY) return; resetToIntro(); }
 
 /* ---------- igralčeva strela ---------- */
 function shoot() {
@@ -375,7 +380,7 @@ function hurtPlayer(dmg) {
   shake = 14;
   addParticles(player.x, player.y, "#e23", 16);
   sfx.hurt();
-  if (player.hp <= 0) { player.hp = 0; state = STATE.LOSE; sfx.lose(); }
+  if (player.hp <= 0) { player.hp = 0; state = STATE.LOSE; endAt = performance.now(); sfx.lose(); }
 }
 
 /* ===========================================================
@@ -525,7 +530,7 @@ function update() {
   // boss premagan
   if (boss && boss.hp <= 0) {
     addParticles(boss.x, boss.y, "#ffe14d", 60);
-    score += 200; boss = null; state = STATE.WIN; sfx.win();
+    score += 200; boss = null; state = STATE.WIN; endAt = performance.now(); sfx.win();
   }
 }
 
@@ -900,11 +905,16 @@ function render() {
 
   drawHUD();
 
-  if (state === STATE.WIN) {
-    panel(G.winTitle, G.winLines.concat([G.scoreLabel + score]), G.winFoot);
-  }
-  if (state === STATE.LOSE) {
-    panel(G.loseTitle, G.loseLines.concat([G.scoreLabel + score]), G.loseFoot);
+  if (state === STATE.WIN || state === STATE.LOSE) {
+    if (endScreen !== state) { endScreen = state; endAt = performance.now(); }
+    const left = Math.max(0, END_DELAY - (performance.now() - endAt));
+    const isWin = state === STATE.WIN;
+    const foot = left > 0
+      ? (LANG === "en" ? "Wait " : "Počakaj ") + Math.ceil(left / 1000) + " …"
+      : (isWin ? G.winFoot : G.loseFoot);
+    panel(isWin ? G.winTitle : G.loseTitle,
+          (isWin ? G.winLines : G.loseLines).concat([G.scoreLabel + score]),
+          foot);
   }
 }
 

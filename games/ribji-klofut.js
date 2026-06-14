@@ -172,6 +172,9 @@ let bossDefeated = false;
 let bossWarn = 0;
 let frame = 0;
 let shake = 0;
+const END_DELAY = 3000;   // ms: po koncu igre toliko časa ne moreš naprej (da se vidi zaslon)
+let endAt = 0;
+let endScreen = null;
 
 /* ---------- vnos ---------- */
 const keys = {};
@@ -196,7 +199,7 @@ function handleAction(k) {
   if (state === STATE.STORY && (k === " " || k === "enter")) {
     storyPage++; if (storyPage >= G.story.length) startGame(); return;
   }
-  if (state === STATE.WIN || state === STATE.LOSE) { if (k === " " || k === "enter") resetToIntro(); return; }
+  if (state === STATE.WIN || state === STATE.LOSE) { if (k === " " || k === "enter") tryLeaveEnd(); return; }
   if (state === STATE.PLAY) {
     if (k === " ") shoot();
     if (k === "m") slash();
@@ -226,7 +229,7 @@ function pointerDown(e) {
     return;
   }
   if (state === STATE.STORY) { storyPage++; if (storyPage >= G.story.length) startGame(); return; }
-  if (state === STATE.WIN || state === STATE.LOSE) { resetToIntro(); return; }
+  if (state === STATE.WIN || state === STATE.LOSE) { tryLeaveEnd(); return; }
   if (state === STATE.PLAY) {
     const p = canvasPos(e);
     // ciljaj v smer tapa
@@ -262,8 +265,10 @@ function startGame() {
   boss = null; bossDefeated = false; bossWarn = 0; frame = 0; shake = 0;
   player.x = 75; player.y = H / 2; player.hp = diff.hp; player.maxHp = diff.hp;
   player.fx = 1; player.fy = 0; player.cooldown = 0; player.slashCd = 0; player.slashTimer = 0; player.invuln = 0;
+  endScreen = null;
 }
 function resetToIntro() { state = STATE.INTRO; storyPage = 0; }
+function tryLeaveEnd() { if (performance.now() - endAt < END_DELAY) return; resetToIntro(); }
 
 /* ---------- trki ---------- */
 function hitsWall(cx, cy, r) {
@@ -347,7 +352,7 @@ function floatText(x, y, text, c, size) { floatTexts.push({ x, y, text, c: c || 
 function hurtPlayer() {
   if (player.invuln > 0) return;
   player.hp--; player.invuln = 75; shake = 8; sfx.hurt();
-  if (player.hp <= 0) { state = STATE.LOSE; sfx.lose(); }
+  if (player.hp <= 0) { state = STATE.LOSE; endAt = performance.now(); sfx.lose(); }
 }
 
 /* ---------- posodobitev ---------- */
@@ -452,7 +457,7 @@ function update() {
   /* boss premagan */
   if (boss && boss.hp <= 0) {
     score += 100; bossDefeated = true; burst(boss.x, boss.y, "#ffd400", 40); boss = null;
-    state = STATE.WIN; sfx.win();
+    state = STATE.WIN; endAt = performance.now(); sfx.win();
   }
 
   /* pobiranje srčkov */
@@ -685,8 +690,15 @@ function render() {
     ctx.fillText(G.bossWarn, W / 2, H / 2);
   }
 
-  if (state === STATE.WIN) panel(G.winTitle, G.winLines.concat([G.hudScore + score]), G.winFoot);
-  if (state === STATE.LOSE) panel(G.loseTitle, G.loseLines.concat([G.hudScore + score]), G.loseFoot);
+  if (state === STATE.WIN || state === STATE.LOSE) {
+    if (endScreen !== state) { endScreen = state; endAt = performance.now(); }
+    const left = Math.max(0, END_DELAY - (performance.now() - endAt));
+    const isWin = state === STATE.WIN;
+    const foot = left > 0
+      ? (LANG === "en" ? "Wait " : "Počakaj ") + Math.ceil(left / 1000) + " …"
+      : (isWin ? G.winFoot : G.loseFoot);
+    panel(isWin ? G.winTitle : G.loseTitle, (isWin ? G.winLines : G.loseLines).concat([G.hudScore + score]), foot);
+  }
 }
 
 /* ---------- zanka ---------- */
