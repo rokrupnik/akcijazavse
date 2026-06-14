@@ -397,7 +397,7 @@ function update() {
   if (!boss && !bossDefeated) {
     spawnTimer++;
     if (spawnTimer >= diff.spawnEvery && enemies.length < diff.maxEnemies) { spawnEnemy(); spawnTimer = 0; }
-    if (kills >= diff.killsToBoss) { enemies = []; spawnBoss(); }
+    if (kills >= diff.killsToBoss) { spawnBoss(); }  // preostale ribe ostanejo
   }
   /* srčki */
   heartTimer++;
