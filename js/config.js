@@ -75,6 +75,17 @@ const SITE = {
       game: "game.html",
       comic: "elektroni",
     },
+    {
+      id: "ribji-klofut",
+      author: "andrej",
+      cover: "assets/ribji-klofut/cover.webp",
+      title: { sl: "Ribji klofut", en: "Fish Slap" },
+      blurb: {
+        sl: "Ti si riba, ki strelja mehurčke in se s repom sabljaš. Plavaj po labirintu, pobiraj srčke za življenje in se izogni ogromnim ribam!",
+        en: "You are a fish that shoots bubbles and sword-fights with its tail. Swim through the maze, collect hearts for life, and dodge the giant fish!",
+      },
+      comic: "ribji-klofut",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
@@ -87,6 +98,13 @@ const SITE = {
         "assets/elektroni/page-2.webp",
         "assets/elektroni/page-3.webp",
         "assets/elektroni/page-4.webp",
+      ],
+    },
+    "ribji-klofut": {
+      author: "andrej",
+      title: { sl: "Ribji klofut", en: "Fish Slap" },
+      pages: [
+        "assets/ribji-klofut/page-1.webp",
       ],
     },
   },
