@@ -915,3 +915,12 @@ function loop() {
   requestAnimationFrame(loop);
 }
 loop();
+
+/* ---------- mobilni akcijski gumbi (primarna = strela, sekundarna = super moč) ---------- */
+if (window.azvRegisterControls) {
+  window.azvRegisterControls({
+    primary: () => { initAudio(); if (state === STATE.PLAY) shoot(); },
+    secondary: () => { initAudio(); if (state === STATE.PLAY) trySuper(); },
+    primaryLabel: "⚡", secondaryLabel: "💥",
+  });
+}

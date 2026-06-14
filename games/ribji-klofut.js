@@ -692,3 +692,12 @@ function render() {
 /* ---------- zanka ---------- */
 function loop() { update(); render(); requestAnimationFrame(loop); }
 loop();
+
+/* ---------- mobilni akcijski gumbi (primarna = mehurček, sekundarna = klofuta z repom) ---------- */
+if (window.azvRegisterControls) {
+  window.azvRegisterControls({
+    primary: () => { initAudio(); if (state === STATE.PLAY) shoot(); },
+    secondary: () => { initAudio(); if (state === STATE.PLAY) bite(); },
+    primaryLabel: "💧", secondaryLabel: "🌀",
+  });
+}

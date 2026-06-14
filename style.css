@@ -443,3 +443,63 @@ canvas#game {
 @media (pointer: coarse) {
   .nav-arrow { display: none; }
 }
+
+/* =========================================================
+   IGRALNI GUMBI (mobilni) + CELOZASLONSKO
+   ========================================================= */
+/* akcijska gumba v kotu canvasa — samo na dotik napravah */
+.game-controls {
+  display: none;
+  position: absolute;
+  right: 14px; bottom: 14px;
+  align-items: flex-end;
+  gap: 14px;
+  z-index: 5;
+}
+@media (pointer: coarse) { .game-controls { display: flex; } }
+.game-btn {
+  border: 3px solid rgba(255,255,255,0.9);
+  color: #fff;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  user-select: none; -webkit-user-select: none;
+  touch-action: none;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+  padding: 0; line-height: 1;
+}
+.game-btn.primary { width: 72px; height: 72px; border-radius: 50%; font-size: 32px; background: rgba(10,108,194,0.6); }
+.game-btn.secondary { width: 58px; height: 58px; border-radius: 50%; font-size: 26px; background: rgba(226,59,59,0.55); }
+.game-btn:active { transform: scale(0.92); }
+
+/* gumb za celozaslonsko (pod canvasom) */
+.fs-enter { display: inline-block; margin-top: 12px; }
+
+/* izhod iz celozaslonskega (zgoraj desno) */
+.fs-exit {
+  display: none;
+  position: absolute; top: 10px; right: 10px; z-index: 6;
+  width: 46px; height: 46px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.9);
+  background: rgba(0,0,0,0.5); color: #fff; font-size: 22px; cursor: pointer;
+  align-items: center; justify-content: center;
+}
+body.azv-fs .fs-exit { display: flex; }
+
+/* native celozaslonsko: canvas naj zapolni zaslon (ležeče) */
+#stage:fullscreen, #stage:-webkit-full-screen {
+  width: 100vw; height: 100vh; max-width: none;
+  border: none; border-radius: 0;
+  display: flex; align-items: center; justify-content: center; background: #000;
+}
+#stage:fullscreen canvas, #stage:-webkit-full-screen canvas {
+  width: auto; height: 100%; max-width: 100%; max-height: 100%;
+}
+/* nadomestno celozaslonsko (npr. iPhone, kjer Fullscreen API ni na voljo) */
+body.azv-pseudofs { overflow: hidden; }
+body.azv-pseudofs #stage {
+  position: fixed; inset: 0; z-index: 9999;
+  width: 100vw; height: 100vh; max-width: none;
+  border: none; border-radius: 0;
+  display: flex; align-items: center; justify-content: center; background: #000;
+}
+body.azv-pseudofs #stage canvas { width: auto; height: 100%; max-width: 100%; max-height: 100%; }

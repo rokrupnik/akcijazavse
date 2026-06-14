@@ -55,4 +55,82 @@
       qrBox.innerHTML = '<img class="donate-qr" src="' + base + d.qr + '" alt="UPN QR" />';
     }
   }
+
+  /* ---------- igralni gumbi (mobilni) + celozaslonsko ---------- */
+  const stage = document.getElementById("stage");
+  if (stage) {
+    // akcijska gumba v kotu canvasa (CSS jih pokaže le na dotik napravah)
+    const controls = document.createElement("div");
+    controls.className = "game-controls";
+    const btnSecondary = document.createElement("button");
+    btnSecondary.className = "game-btn secondary"; btnSecondary.type = "button";
+    const btnPrimary = document.createElement("button");
+    btnPrimary.className = "game-btn primary"; btnPrimary.type = "button";
+    controls.appendChild(btnSecondary);
+    controls.appendChild(btnPrimary);
+    stage.appendChild(controls);
+
+    // izhod iz celozaslonskega (zgoraj desno)
+    const exitBtn = document.createElement("button");
+    exitBtn.className = "fs-exit"; exitBtn.type = "button"; exitBtn.textContent = "✕";
+    exitBtn.setAttribute("aria-label", "exit");
+    stage.appendChild(exitBtn);
+
+    // gumb celozaslonsko (pod canvasom)
+    const fsBtn = document.createElement("button");
+    fsBtn.className = "fs-enter ghost-btn"; fsBtn.type = "button";
+    fsBtn.textContent = (L() === "en" ? "⛶ Full screen" : "⛶ Celozaslonsko");
+    stage.insertAdjacentElement("afterend", fsBtn);
+
+    // igra registrira svoji akciji
+    let prim = null, sec = null;
+    window.azvRegisterControls = function (c) {
+      prim = c.primary; sec = c.secondary;
+      if (c.primaryLabel) btnPrimary.textContent = c.primaryLabel;
+      if (c.secondaryLabel) btnSecondary.textContent = c.secondaryLabel;
+    };
+
+    // primarni gumb: drži za samodejno streljanje
+    let fireTimer = null;
+    btnPrimary.addEventListener("pointerdown", (e) => {
+      e.preventDefault();
+      if (prim) prim();
+      clearInterval(fireTimer);
+      fireTimer = setInterval(() => { if (prim) prim(); }, 110);
+    });
+    const stopFire = () => { clearInterval(fireTimer); fireTimer = null; };
+    ["pointerup", "pointercancel", "pointerleave"].forEach((ev) => btnPrimary.addEventListener(ev, stopFire));
+    // sekundarni gumb: en pritisk
+    btnSecondary.addEventListener("pointerdown", (e) => { e.preventDefault(); if (sec) sec(); });
+
+    // --- celozaslonsko ---
+    function lockLandscape() {
+      document.body.classList.add("azv-fs");
+      try { if (screen.orientation && screen.orientation.lock) screen.orientation.lock("landscape").catch(() => {}); } catch (e) {}
+    }
+    function enterFS() {
+      const req = stage.requestFullscreen || stage.webkitRequestFullscreen;
+      if (req) {
+        Promise.resolve(req.call(stage)).then(lockLandscape).catch(lockLandscape);
+      } else {
+        document.body.classList.add("azv-pseudofs", "azv-fs");  // npr. iPhone
+      }
+    }
+    function exitFS() {
+      if (document.fullscreenElement || document.webkitFullscreenElement) {
+        (document.exitFullscreen || document.webkitExitFullscreen).call(document);
+      }
+      document.body.classList.remove("azv-pseudofs", "azv-fs");
+      try { if (screen.orientation && screen.orientation.unlock) screen.orientation.unlock(); } catch (e) {}
+    }
+    fsBtn.addEventListener("click", enterFS);
+    exitBtn.addEventListener("click", exitFS);
+    ["fullscreenchange", "webkitfullscreenchange"].forEach((ev) =>
+      document.addEventListener(ev, () => {
+        const fs = document.fullscreenElement || document.webkitFullscreenElement;
+        if (!fs) document.body.classList.remove("azv-fs");
+        else document.body.classList.add("azv-fs");
+      })
+    );
+  }
 })();
