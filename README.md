@@ -8,16 +8,17 @@ Dvojezična (slovensko / angleško), brez ogrodij — same statične datoteke.
 | Datoteka | Kaj je |
 |---|---|
 | `index.html` | Domača stran: predstavitev avtorjev + izbira zgodb |
-| `game.html` | Igra (Elektroni: strah v rokah) |
 | `strip.html?story=ID` | Strip bralnik (lista strani) |
+| `games/` | Igre — vsaka svoj `.html` in `.js` (npr. `games/game.html`, `games/ribji-klofut.html`) |
 | `style.css` | Slog (videz stripa, karo papir) |
-| `game.js` | Logika igre (dvojezična besedila v objektu `GT`) |
 | `js/config.js` | **Nastavitve: avtorji, zgodbe, stripi, donacije** |
 | `js/i18n.js` | Preklop jezika SL / EN |
 | `js/hub.js` | Izris domače strani |
 | `js/strip.js` | Strip bralnik |
 | `js/page.js` | Skupna glava (jezik + donacije) na strani z igro |
 | `assets/` | Slike stripov |
+
+> Igre v `games/` se na svoje vire sklicujejo z `../` (npr. `../style.css`, `../js/…`, `../assets/…`).
 
 ## Kako dodati novo zgodbo (brez programiranja)
 

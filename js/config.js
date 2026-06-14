@@ -58,7 +58,7 @@ const SITE = {
 
   /* ---- ZGODBE NA DOMAČI STRANI ----
      Ena kartica = ena zgodba. Lahko ima igro in/ali strip:
-       game:  pot do igre (npr. "game.html")  -> gumb "Igraj"
+       game:  pot do igre (npr. "games/game.html")  -> gumb "Igraj"
        comic: ID stripa iz "comics" spodaj     -> gumb "Beri strip"
      Navedi eno, drugo ali oboje.
      author: "simon" | "jakob" | "andrej" */
@@ -72,7 +72,7 @@ const SITE = {
         sl: "Ti si elektron – prijazni hrček s strelami. Premagaj zlobne hrčke in velikega hrčka!",
         en: "You are an electron – a friendly hamster with lightning. Beat the evil hamsters and the big hamster!",
       },
-      game: "game.html",
+      game: "games/game.html",
       comic: "elektroni",
     },
     {
@@ -85,7 +85,7 @@ const SITE = {
         en: "You are a fish that shoots bubbles and sword-fights with its tail. Swim through the maze, collect hearts for life, and dodge the giant fish!",
       },
       comic: "ribji-klofut",
-      game: "ribji-klofut.html",
+      game: "games/ribji-klofut.html",
     },
   ],
 
