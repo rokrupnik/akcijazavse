@@ -18,13 +18,41 @@
     return;
   }
 
-  let page = 0;
-  const last = comic.pages.length - 1;
+  let page = 0;                          // 0 = uvod (povzetek), 1..N = strani stripa
+  const last = comic.pages.length;       // zadnji indeks (uvod + N strani)
+  const introBox = document.getElementById("comic-intro");
+
+  function renderIntro() {
+    const summary = (comic.intro && (comic.intro[L()] || comic.intro.sl)) ||
+                    (comic.blurb && (comic.blurb[L()] || comic.blurb.sl)) || "";
+    const startTxt = L() === "en" ? "Start reading ›" : "Začni branje ›";
+    const badge = L() === "en" ? "The story" : "Zgodba";
+    introBox.innerHTML =
+      '<div class="intro-inner">' +
+      '<div class="intro-badge"></div>' +
+      '<p class="intro-text"></p>' +
+      '<button class="ghost-btn intro-start"></button>' +
+      '</div>';
+    introBox.querySelector(".intro-badge").textContent = badge;
+    introBox.querySelector(".intro-text").textContent = summary;
+    const b = introBox.querySelector(".intro-start");
+    b.textContent = startTxt;
+    b.addEventListener("click", () => go(1));
+  }
 
   function show() {
     page = Math.max(0, Math.min(last, page));
-    img.src = comic.pages[page];
-    ind.textContent = (page + 1) + " / " + comic.pages.length;
+    if (page === 0) {
+      img.style.display = "none";
+      introBox.style.display = "";
+      renderIntro();
+      ind.textContent = L() === "en" ? "Intro" : "Uvod";
+    } else {
+      introBox.style.display = "none";
+      img.style.display = "";
+      img.src = comic.pages[page - 1];
+      ind.textContent = page + " / " + comic.pages.length;
+    }
     document.getElementById("prev").classList.toggle("disabled", page === 0);
     document.getElementById("prev2").disabled = page === 0;
     document.getElementById("next").classList.toggle("disabled", page === last);
@@ -41,10 +69,11 @@
     if (e.key === "ArrowRight") go(1);
   });
 
-  // drsanje (mobilni)
+  // drsanje (mobilni) — na celotnem odru, da deluje tudi na uvodu
+  const stage = document.querySelector(".reader-stage");
   let sx = null;
-  img.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
-  img.addEventListener("touchend", (e) => {
+  stage.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+  stage.addEventListener("touchend", (e) => {
     if (sx === null) return;
     const dx = e.changedTouches[0].clientX - sx;
     if (Math.abs(dx) > 40) go(dx < 0 ? 1 : -1);
@@ -58,6 +87,7 @@
     const author = SITE.authors[comic.author];
     document.getElementById("comic-author").textContent =
       author ? window.AZV.t("by_author") + " " + author.name : "";
+    show();   // osveži uvod/indikator v izbranem jeziku
   }
   document.getElementById("lang-btn").addEventListener("click", () => window.AZV.toggle());
 
@@ -102,5 +132,4 @@
 
   window.AZV.onChange(refreshLang);
   refreshLang();
-  show();
 })();

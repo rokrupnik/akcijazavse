@@ -353,6 +353,31 @@ canvas#game {
   background: #fff;
   box-shadow: 4px 6px 0 rgba(0,0,0,0.25);
 }
+.comic-intro {
+  width: 100%;
+  max-width: 560px;
+  min-height: 320px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 3px solid #2b2b2b;
+  border-radius: 10px;
+  background: #fdfdf7;
+  box-shadow: 4px 6px 0 rgba(0,0,0,0.25);
+  padding: 28px 26px;
+}
+.intro-inner { text-align: center; max-width: 460px; }
+.intro-badge {
+  display: inline-block;
+  background: #ffd400;
+  border: 2px solid #2b2b2b;
+  border-radius: 8px;
+  font-size: 13px; font-weight: bold;
+  padding: 3px 12px;
+  margin-bottom: 16px;
+}
+.intro-text { font-size: clamp(16px, 2.6vw, 19px); line-height: 1.6; color: #2b2b2b; margin: 0 0 22px; }
+.intro-start { background: #0a6cc2; color: #fff; border-color: #08538f; }
 .nav-arrow {
   position: absolute;
   top: 50%; transform: translateY(-50%);

@@ -109,6 +109,10 @@ const SITE = {
     elektroni: {
       author: "simon",
       title: { sl: "Elektroni – strip", en: "Electrons – comic" },
+      intro: {
+        sl: "Na sceno prilezejo trije zlobni hrčki in veliki hrček ukaže napad. A takrat se zbudijo ELEKTRONI — prijazni ruzijski hrčki s strelami. Začne se velik boj za las. Bodo elektroni rešili dan?",
+        en: "Three evil hamsters appear and the big hamster orders an attack. But then the ELECTRONS awaken — friendly hamsters with lightning. A great, close battle begins. Will the electrons save the day?",
+      },
       pages: [
         "assets/elektroni/page-1.webp",
         "assets/elektroni/page-2.webp",
@@ -119,6 +123,10 @@ const SITE = {
     "ribji-klofut": {
       author: "andrej",
       title: { sl: "Ribji klofut", en: "Fish Slap" },
+      intro: {
+        sl: "En sam velik prizor iz globin morja: pogumna ribica se znajde sredi razburkane bitke med ogromnimi ribami in morskimi psi. Tako se začne Ribji klofut!",
+        en: "A single big scene from the depths of the sea: a brave little fish in the middle of a wild battle among giant fish and sharks. This is where Fish Slap begins!",
+      },
       pages: [
         "assets/ribji-klofut/page-1.webp",
       ],
@@ -126,6 +134,10 @@ const SITE = {
     korencki: {
       author: "jakob",
       title: { sl: "Noč strašnih korenčkov", en: "Night of the Scary Carrots" },
+      intro: {
+        sl: "Nekdo skuha korenčkovo juho in gre spat. A korenčki oživijo, pobegnejo do jame in se spremenijo v korenčke-netopirje! Ponoči napadejo mesto — ustavi jih lahko le super mucek. Preberi, kako se konča!",
+        en: "Someone cooks carrot soup and goes to bed. But the carrots come alive, escape to a cave and turn into carrot-bats! At night they attack the city — only Super Kitty can stop them. Read how it ends!",
+      },
       pages: [
         "assets/korencki/page-1.webp",
         "assets/korencki/page-2.webp",
