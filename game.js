@@ -107,7 +107,7 @@ const GT = {
     selectTitle: "Izberi težavnost",
     selectHint: "Tipke ↑ ↓ in preslednica  •  ali tapni izbiro",
     storyNext: "(tapni / preslednica za naprej)",
-    hudFull: "ELEKTRIKA POLNA — pritisni M!", hudElektrika: "Elektrika",
+    hudFull: "SUPER MOČ POLNA — pritisni M!", hudElektrika: "Super moč",
     hudForLife: "Elektrika za življenje:", scoreLabel: "Točke: ",
     sndOn: "🔊 zvok: M", sndOff: "🔇 zvok: M",
     winTitle: "ZMAGA! 🎉",
@@ -120,7 +120,7 @@ const GT = {
     diffDescs: ["5 življenj, sovražniki padejo z 1 strelom", "3 življenja, več akcije", "3 življenja, prava bitka!"],
     story: [
       "Pred tremi urami so se na sceni znašli trije zlobni hrčki...",
-      "Veliki hrček je ukazal: »NAPADI!« — in zlobni hrček je planil naprej.",
+      "Veliki hrček je ukazal: »NAPAD!« — in zlobni hrčki so planili naprej.",
       "Tako so se zbudili stari ELEKTRONI — prijazni ruzijski hrčki s strelami!",
       "Začel se je veliki boj. Pomagaj elektronom zmagati za las!",
     ],
@@ -134,7 +134,7 @@ const GT = {
     selectTitle: "Choose difficulty",
     selectHint: "Keys ↑ ↓ and space  •  or tap to choose",
     storyNext: "(tap / space to continue)",
-    hudFull: "ELECTRICITY FULL — press M!", hudElektrika: "Electricity",
+    hudFull: "SUPER POWER READY — press M!", hudElektrika: "Super power",
     hudForLife: "Electricity for a life:", scoreLabel: "Score: ",
     sndOn: "🔊 sound: M", sndOff: "🔇 sound: M",
     winTitle: "VICTORY! 🎉",
@@ -164,8 +164,8 @@ const player = {
   hp: 3,
   maxHp: 3,
   cooldown: 0,
-  elektrika: 60,      // 0..100; blizu elektrike = močan
-  maxElektrika: 100,
+  superCharge: 0,     // 0..100; super moč se postopno polni
+  maxSuper: 100,
   invuln: 0,
   flap: 0,
 };
@@ -272,7 +272,7 @@ function startGame() {
   state = STATE.PLAY;
   bolts = []; enemies = []; eProjectiles = []; orbs = []; particles = []; floatTexts = [];
   score = 0; orbCount = 0; spawnTimer = 0; orbTimer = 0; bossSpawned = false; boss = null; shake = 0;
-  player.x = 110; player.y = H / 2; player.maxHp = diff.hp; player.hp = diff.hp; player.elektrika = 60;
+  player.x = 110; player.y = H / 2; player.maxHp = diff.hp; player.hp = diff.hp; player.superCharge = 0;
   player.cooldown = 0; player.invuln = 60;
 }
 function resetToIntro() { state = STATE.INTRO; storyPage = 0; }
@@ -280,19 +280,16 @@ function resetToIntro() { state = STATE.INTRO; storyPage = 0; }
 /* ---------- igralčeva strela ---------- */
 function shoot() {
   if (player.cooldown > 0) return;
-  const strong = player.elektrika > 25;
-  player.cooldown = strong ? 9 : 22;          // slaba elektrika => počasno streljanje ("se spara")
-  const dmg = strong ? 2 : 1;
-  bolts.push({ x: player.x + player.r, y: player.y, vx: strong ? 13 : 8, dmg, t: 0 });
-  player.elektrika = Math.max(0, player.elektrika - 1.2);
+  player.cooldown = 11;
+  bolts.push({ x: player.x + player.r, y: player.y, vx: 12, dmg: 2, t: 0 });
   addParticles(player.x + player.r, player.y, "#ffe14d", 4);
   sfx.shoot();
 }
 
 /* ---------- super moč: nevihta strel ---------- */
 function trySuper() {
-  if (player.elektrika < player.maxElektrika) return;
-  player.elektrika = 0;
+  if (player.superCharge < player.maxSuper) return;
+  player.superCharge = 0;
   shake = 24;
   sfx.super();
   // udari vse na zaslonu
@@ -367,6 +364,7 @@ function onEnemyKilled(en) {
   score += en.type === "poison" ? 15 : 10;
   addParticles(en.x, en.y, "#bbb", 12);
   sfx.kill();
+  player.superCharge = Math.min(player.maxSuper, player.superCharge + 8);  // super se polni z uničevanjem
   if (Math.random() < 0.35) orbs.push({ x: en.x, y: en.y, vx: -1, r: 12, t: 0 });
 }
 
@@ -404,8 +402,8 @@ function update() {
   /* streljanje s tipko */
   if (keys[" "]) shoot();
 
-  /* elektrika počasi pada (junaki se "sparajo" stran od elektrike) */
-  player.elektrika = Math.max(0, player.elektrika - 0.04);
+  /* super moč se počasi polni, hitreje pa z uničevanjem sovražnikov */
+  player.superCharge = Math.min(player.maxSuper, player.superCharge + 0.12);
 
   /* spawn */
   spawnTimer--;
@@ -504,7 +502,6 @@ function update() {
   orbs.forEach((o) => {
     if (dist2(o.x, o.y, player.x, player.y) < (o.r + player.r) ** 2) {
       o.dead = true;
-      player.elektrika = Math.min(player.maxElektrika, player.elektrika + 30);
       addParticles(o.x, o.y, "#7ab8ff", 10);
       sfx.orb();
       orbCount++;
@@ -555,8 +552,8 @@ function pencil() { ctx.strokeStyle = "#2b2b2b"; ctx.lineWidth = 3; ctx.lineJoin
 function drawElectron(x, y, r, flap, hurt) {
   ctx.save();
   ctx.translate(x, y);
-  // aura elektrike
-  if (player.elektrika > 25) {
+  // aura, ko je super moč polna (pripravljena)
+  if (player.superCharge >= player.maxSuper) {
     ctx.strokeStyle = `rgba(255,225,77,${0.4 + 0.3 * Math.sin(frame * 0.3)})`;
     ctx.lineWidth = 3;
     ctx.beginPath(); ctx.arc(0, 0, r + 8, 0, Math.PI * 2); ctx.stroke();
@@ -738,11 +735,11 @@ function drawHUD() {
     ctx.bezierCurveTo(hx + 10, hy - 2, hx, hy, hx, hy + 6);
     ctx.fill();
   }
-  // elektrika bar
+  // lestvica super moči (se polni)
   const bx = 20, by = 54, bw = 180, bh = 14;
   ctx.fillStyle = "rgba(0,0,0,0.1)"; ctx.fillRect(bx, by, bw, bh);
-  const frac = player.elektrika / player.maxElektrika;
-  ctx.fillStyle = frac >= 1 ? "#ffd400" : "#5fa8ff";
+  const frac = player.superCharge / player.maxSuper;
+  ctx.fillStyle = frac >= 1 ? "#ffd400" : "#ff9b3b";
   ctx.fillRect(bx, by, bw * frac, bh);
   ctx.strokeStyle = "#2b2b2b"; ctx.lineWidth = 2; ctx.strokeRect(bx, by, bw, bh);
   ctx.fillStyle = "#2b2b2b"; ctx.font = "bold 12px sans-serif"; ctx.textAlign = "left";
