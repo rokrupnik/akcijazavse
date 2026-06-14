@@ -96,8 +96,7 @@
     const qrBox = document.getElementById("donate-qr");
     if (qrBox && d.qr) {
       const base = location.pathname.includes("/games/") ? "../" : "";
-      const label = L() === "en" ? "Or scan in your bank app:" : "Ali skeniraj v aplikaciji banke:";
-      qrBox.innerHTML = '<p class="qr-label">' + label + '</p><img class="donate-qr" src="' + base + d.qr + '" alt="UPN QR" />';
+      qrBox.innerHTML = '<img class="donate-qr" src="' + base + d.qr + '" alt="UPN QR" />';
     }
   }
 
