@@ -19,7 +19,7 @@ const SITE = {
     kofi:   "",   // npr. "https://ko-fi.com/uporabnik"
     bmac:   "",   // npr. "https://buymeacoffee.com/uporabnik"
     stripe: "",   // Stripe Payment Link, npr. "https://buy.stripe.com/..."
-    flik:   "",   // Flik PLAČAJ: telefonska številka (npr. "+386 41 123 456"); prazno = se ne prikaže
+    flik:   "rok7rupnik@gmail.com",   // Flik alias: e-pošta ALI telefon (mora biti registriran/aktiviran v Flik aplikaciji banke); prazno = se ne prikaže
     bank: {
       sl: "Ime: Rok Rupnik\nIBAN: SI56 0400 1010 4830 702\nNamen: Dar - Akcija za vse",
       en: "Name: Rok Rupnik\nIBAN: SI56 0400 1010 4830 702\nReference: Dar - Akcija za vse",

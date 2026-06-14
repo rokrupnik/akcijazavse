@@ -111,7 +111,7 @@
     if (d.flik) {
       const f = document.createElement("div");
       f.className = "donate-flik";
-      f.textContent = "🟢 Flik PLAČAJ: " + d.flik;
+      f.textContent = "🟢 Flik: " + d.flik;
       links.appendChild(f);
     }
     const bankBox = document.getElementById("donate-bank");

@@ -89,7 +89,7 @@
     if (d.flik) {
       const f = document.createElement("div");
       f.className = "donate-flik";
-      f.textContent = "🟢 Flik PLAČAJ: " + d.flik;
+      f.textContent = "🟢 Flik: " + d.flik;
       links.appendChild(f);
     }
     document.getElementById("donate-bank").textContent = d.bank[L()] || d.bank.sl;
