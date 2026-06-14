@@ -291,7 +291,7 @@ function shoot() {
 }
 function slash() {
   if (player.slashCd > 0) return;
-  player.slashCd = 42;
+  player.slashCd = 120;   // ~2 sekundi, da se rep spet pripravi (pri 60 sl/s)
   player.slashTimer = 12;
   sfx.slash();
   const reach = player.r + 42;
