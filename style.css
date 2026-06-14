@@ -437,3 +437,9 @@ canvas#game {
   .nav-arrow { width: 40px; height: 40px; font-size: 22px; }
   .member { width: 44%; }
 }
+
+/* Na dotik napravah (telefon/tablica) skrij plavajoči puščici —
+   za listanje se uporablja drsanje in spodnja gumba naprej/nazaj. */
+@media (pointer: coarse) {
+  .nav-arrow { display: none; }
+}
