@@ -30,9 +30,9 @@
       donate_close:  "Zapri",
       footer_made:   "Naredili bratje · za zabavo in učenje",
       game_title:    "⚡ Elektroni: strah v rokah ⚡",
-      game_hint:     'Tipke: <b>↑ ↓</b> ali <b>W / S</b> za gor-dol &nbsp;•&nbsp; <b>Preslednica</b> = strela &nbsp;•&nbsp; <b>X</b> = super moč &nbsp;•&nbsp; <b>M</b> = zvok &nbsp;•&nbsp; na telefonu: <b>tapni</b> za strelo, <b>drsaj</b> za premik<br />💡 Poberi <b>3 elektrike</b> in dobiš nazaj <b>eno življenje</b> ❤️',
+      game_hint:     'Tipke: <b>↑ ↓</b> ali <b>W / S</b> za gor-dol &nbsp;•&nbsp; <b>Preslednica</b> = strela &nbsp;•&nbsp; <b>M</b> = super moč (ko je elektrika polna) &nbsp;•&nbsp; na telefonu: <b>tapni</b> za strelo, <b>drsaj</b> za premik<br />💡 Poberi <b>3 elektrike</b> in dobiš nazaj <b>eno življenje</b> ❤️',
       rk_title:      "🐟 Ribji klofut 🐟",
-      rk_hint:       'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za plavanje &nbsp;•&nbsp; <b>Preslednica</b> = mehurček &nbsp;•&nbsp; <b>X</b> = klofuta z repom &nbsp;•&nbsp; <b>M</b> = zvok &nbsp;•&nbsp; na telefonu: <b>drsaj</b> za plavanje, <b>tapni</b> za mehurček, <b>dvojni tap</b> za rep<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikansko ribo!',
+      rk_hint:       'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za plavanje &nbsp;•&nbsp; <b>Preslednica</b> = mehurček &nbsp;•&nbsp; <b>M</b> = klofuta z repom &nbsp;•&nbsp; na telefonu: <b>drsaj</b> za plavanje, <b>tapni</b> za mehurček, <b>dvojni tap</b> za rep<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikansko ribo!',
     },
     en: {
       site_title:    "Action for everyone",
@@ -56,9 +56,9 @@
       donate_close:  "Close",
       footer_made:   "Made by brothers · for fun and learning",
       game_title:    "⚡ Electrons: fear in their hands ⚡",
-      game_hint:     'Keys: <b>↑ ↓</b> or <b>W / S</b> to move &nbsp;•&nbsp; <b>Space</b> = shoot &nbsp;•&nbsp; <b>X</b> = super power &nbsp;•&nbsp; <b>M</b> = sound &nbsp;•&nbsp; on phone: <b>tap</b> to shoot, <b>swipe</b> to move<br />💡 Collect <b>3 electricities</b> to get back <b>one life</b> ❤️',
+      game_hint:     'Keys: <b>↑ ↓</b> or <b>W / S</b> to move &nbsp;•&nbsp; <b>Space</b> = shoot &nbsp;•&nbsp; <b>M</b> = super power (when electricity is full) &nbsp;•&nbsp; on phone: <b>tap</b> to shoot, <b>swipe</b> to move<br />💡 Collect <b>3 electricities</b> to get back <b>one life</b> ❤️',
       rk_title:      "🐟 Fish Slap 🐟",
-      rk_hint:       'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to swim &nbsp;•&nbsp; <b>Space</b> = bubble &nbsp;•&nbsp; <b>X</b> = tail slap &nbsp;•&nbsp; <b>M</b> = sound &nbsp;•&nbsp; on phone: <b>swipe</b> to swim, <b>tap</b> for bubble, <b>double-tap</b> for tail<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant fish!',
+      rk_hint:       'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to swim &nbsp;•&nbsp; <b>Space</b> = bubble &nbsp;•&nbsp; <b>M</b> = tail slap &nbsp;•&nbsp; on phone: <b>swipe</b> to swim, <b>tap</b> for bubble, <b>double-tap</b> for tail<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant fish!',
     },
   };
 

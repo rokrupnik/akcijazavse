@@ -107,13 +107,13 @@ const GT = {
     selectTitle: "Izberi težavnost",
     selectHint: "Tipke ↑ ↓ in preslednica  •  ali tapni izbiro",
     storyNext: "(tapni / preslednica za naprej)",
-    hudFull: "ELEKTRIKA POLNA — pritisni X!", hudElektrika: "Elektrika",
+    hudFull: "ELEKTRIKA POLNA — pritisni M!", hudElektrika: "Elektrika",
     hudForLife: "Elektrika za življenje:", scoreLabel: "Točke: ",
     sndOn: "🔊 zvok: M", sndOff: "🔇 zvok: M",
     winTitle: "ZMAGA! 🎉",
     winLines: ["Boj je trajal in trajal...", "a za las so naši junaki ZMAGALI!", "Veliki hrček je premagan. ⚡"],
     winFoot: "Pritisni preslednico / tapni za novo igro",
-    loseTitle: "KONEC 😿",
+    loseTitle: "KONEC 💔",
     loseLines: ["Zlobni hrčki so bili premočni...", "a elektroni se ne predajo!"],
     loseFoot: "Pritisni preslednico / tapni za nov poskus",
     diffNames: ["LAHKO", "SREDNJE", "TEŽKO"],
@@ -134,13 +134,13 @@ const GT = {
     selectTitle: "Choose difficulty",
     selectHint: "Keys ↑ ↓ and space  •  or tap to choose",
     storyNext: "(tap / space to continue)",
-    hudFull: "ELECTRICITY FULL — press X!", hudElektrika: "Electricity",
+    hudFull: "ELECTRICITY FULL — press M!", hudElektrika: "Electricity",
     hudForLife: "Electricity for a life:", scoreLabel: "Score: ",
     sndOn: "🔊 sound: M", sndOff: "🔇 sound: M",
     winTitle: "VICTORY! 🎉",
     winLines: ["The battle went on and on...", "but by a hair our heroes WON!", "The big hamster is beaten. ⚡"],
     winFoot: "Press space / tap for a new game",
-    loseTitle: "GAME OVER 😿",
+    loseTitle: "GAME OVER 💔",
     loseLines: ["The evil hamsters were too strong...", "but the electrons never give up!"],
     loseFoot: "Press space / tap to try again",
     diffNames: ["EASY", "MEDIUM", "HARD"],
@@ -195,7 +195,6 @@ window.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   keys[k] = true;
   if ([" ", "arrowup", "arrowdown"].includes(k)) e.preventDefault();
-  if (k === "m") { muted = !muted; return; }
   handleAction(k);
 });
 window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
@@ -219,7 +218,7 @@ function handleAction(k) {
     return;
   }
   if ((state === STATE.WIN || state === STATE.LOSE) && (k === " " || k === "enter")) { resetToIntro(); return; }
-  if (state === STATE.PLAY && k === "x") trySuper();
+  if (state === STATE.PLAY && k === "m") trySuper();
 }
 
 /* ---------- dotik / miška ---------- */
@@ -762,9 +761,6 @@ function drawHUD() {
   // točke
   ctx.textAlign = "right"; ctx.font = "bold 22px sans-serif"; ctx.fillStyle = "#1a1a1a";
   ctx.fillText(G.scoreLabel + score, W - 20, 34);
-  // zvok
-  ctx.font = "14px sans-serif"; ctx.fillStyle = "#666";
-  ctx.fillText(muted ? G.sndOff : G.sndOn, W - 20, 56);
 }
 
 function drawParticles() {

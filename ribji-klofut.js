@@ -76,14 +76,14 @@ const GT = {
     winTitle: "ZMAGA! 🎉",
     winLines: ["Velikanska riba je premagana!", "Morje je spet varno za male ribice. 🐟"],
     winFoot: "Pritisni preslednico / tapni za novo igro",
-    loseTitle: "KONEC 😿",
+    loseTitle: "KONEC 💔",
     loseLines: ["Velike ribe so bile premočne...", "a pogumna ribica se ne preda!"],
     loseFoot: "Pritisni preslednico / tapni za nov poskus",
     diffNames: ["LAHKO", "SREDNJE", "TEŽKO"],
-    diffDescs: ["5 življenj, manj ribičev", "3 življenja, več akcije", "3 življenja, pravi vihar!"],
+    diffDescs: ["5 življenj, manj plenilskih rib", "3 življenja, več akcije", "3 življenja, pravi vihar!"],
     story: [
-      "Globoko v modrem morju je zaživela pogumna ribica.",
-      "Strelja mehurčke in se s svojim repom sabljaš kot z mečem!",
+      "Globoko v modrem morju je živela pogumna ribica.",
+      "Strelja mehurčke in se s svojim repom sablja kot z mečem!",
       "Med koralami prežijo ogromne ribe in angelski morski psi.",
       "Pobiraj srčke ❤️, da ostaneš živ, in premagaj velikansko ribo!",
     ],
@@ -103,7 +103,7 @@ const GT = {
     winTitle: "VICTORY! 🎉",
     winLines: ["The giant fish is beaten!", "The sea is safe for little fish again. 🐟"],
     winFoot: "Press space / tap for a new game",
-    loseTitle: "GAME OVER 😿",
+    loseTitle: "GAME OVER 💔",
     loseLines: ["The big fish were too strong...", "but the brave little fish never gives up!"],
     loseFoot: "Press space / tap to try again",
     diffNames: ["EASY", "MEDIUM", "HARD"],
@@ -180,7 +180,6 @@ window.addEventListener("keydown", (e) => {
   const k = e.key.toLowerCase();
   keys[k] = true;
   if ([" ", "arrowup", "arrowdown", "arrowleft", "arrowright"].includes(k)) e.preventDefault();
-  if (k === "m") { muted = !muted; return; }
   handleAction(k);
 });
 window.addEventListener("keyup", (e) => { keys[e.key.toLowerCase()] = false; });
@@ -200,7 +199,7 @@ function handleAction(k) {
   if (state === STATE.WIN || state === STATE.LOSE) { if (k === " " || k === "enter") resetToIntro(); return; }
   if (state === STATE.PLAY) {
     if (k === " ") shoot();
-    if (k === "x" || k === "k") slash();
+    if (k === "m") slash();
   }
 }
 
@@ -599,8 +598,6 @@ function drawHUD() {
   // točke
   ctx.textAlign = "right"; ctx.font = "bold 22px sans-serif"; ctx.fillStyle = "#fff";
   ctx.fillText(G.hudScore + score, W - 20, 34);
-  ctx.font = "14px sans-serif"; ctx.fillStyle = "rgba(255,255,255,0.85)";
-  ctx.fillText(muted ? G.sndOff : G.sndOn, W - 20, 56);
   ctx.textAlign = "center";
 }
 
