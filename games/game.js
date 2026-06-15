@@ -909,12 +909,20 @@ function render() {
 }
 
 /* ---------- zanka ---------- */
-function loop() {
-  update();
+/* fiksni časovni korak 60 Hz — hitrost neodvisna od osveževanja zaslona */
+const STEP_MS = 1000 / 60;
+let lastTs = 0, accMs = 0;
+function loop(now) {
+  if (!lastTs) lastTs = now;
+  accMs += now - lastTs;
+  lastTs = now;
+  if (accMs > 250) accMs = 250;                 // varovalo po zamrznitvi/zavihku v ozadju
+  let steps = 0;
+  while (accMs >= STEP_MS && steps < 5) { update(); accMs -= STEP_MS; steps++; }
   render();
   requestAnimationFrame(loop);
 }
-loop();
+requestAnimationFrame(loop);
 
 /* ---------- mobilni akcijski gumbi (primarna = strela, sekundarna = super moč) ---------- */
 if (window.azvRegisterControls) {
