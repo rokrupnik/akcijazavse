@@ -126,6 +126,18 @@ const SITE = {
       comic: "napad-palck",
       game: "games/napad-palck.html",
     },
+    {
+      id: "bojevniske-miske",
+      author: "andrej",
+      cover: "assets/bojevniske-miske/cover.webp",
+      title: { sl: "Bojevniške miške", en: "Warrior Mice" },
+      blurb: {
+        sl: "3D igra z računi! Izberi bojevniško miš — vsaka se bori s svojo računsko operacijo (+ − × ÷). Prebij se skozi naključni labirint mimo spečih mačk: reši njihove račune, da spijo naprej. Na koncu te čaka velika mačka in VELIKI SIR!",
+        en: "A 3D math game! Pick a warrior mouse — each fights with its own operation (+ − × ÷). Sneak through a random maze past sleeping cats: solve their problems so they sleep on. At the end: the big cat and the BIG CHEESE!",
+      },
+      comic: "bojevniske-miske",
+      game: "games/bojevniske-miske.html",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
@@ -193,6 +205,17 @@ const SITE = {
       },
       pages: [
         "assets/napad-palck/page-1.webp",
+      ],
+    },
+    "bojevniske-miske": {
+      author: "andrej",
+      title: { sl: "Bojevniške miške", en: "Warrior Mice" },
+      intro: {
+        sl: "Andrejeva zbirka bojevniških mišk in njihovih znakov moči — vsaka miška je svoj junak. Po tem stripu je nastala 3D igra z računi. Poglej miške in se podaj v labirint!",
+        en: "Andrej's collection of warrior mice and their power symbols — each mouse its own hero. This comic inspired the 3D math game. Meet the mice and head into the maze!",
+      },
+      pages: [
+        "assets/bojevniske-miske/page-1.webp",
       ],
     },
   },

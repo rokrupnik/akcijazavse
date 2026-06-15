@@ -1,14 +1,16 @@
 /* ===========================================================
    BOJEVNIŠKE MIŠKE  (avtor zgodbe: Andrej)
    3D igra (Minecraft Dungeons slog) z matematičnimi nalogami.
-   MEJNIK 1: gozd/grad-hodnik, premična miš, diagonalna kamera,
-   speče mačke in veliki boss s sirčkom. Matematična srečanja
-   pridejo v naslednjem koraku.
+   Izbereš bojevniško miš (matematična operacija), greš skozi naključni
+   labirint mimo spečih mačk. Pri vsaki rešiš račune: vse prav = mačka spi
+   in greš mimo; nekaj prav = mačka te opraska (izgubiš življenje, znova);
+   premalo = mačka te poje (nazaj na začetek). Na koncu veliki boss in sir.
 
-   Zgrajeno modularno: 3D pogon je v ./lib/iso-engine.js,
-   tu je le vsebina (svet, modeli, postavitev).
+   Zgrajeno modularno: 3D pogon je v ./lib/iso-engine.js, kviz v
+   ./lib/mathquiz.js; tu je vsebina (svet, modeli, pravila).
    =========================================================== */
 import { IsoEngine, box, THREE } from "./lib/iso-engine.js";
+import { runQuiz } from "./lib/mathquiz.js";
 
 const canvas = document.getElementById("game");
 
@@ -67,12 +69,14 @@ function pathNeighbor(cell, dr, dc) {
 }
 
 const WALL = 0.5;
+const catBlocked = new Set();   // celice mačk, ki še blokirajo (dokler jih ne rešiš)
 // robna kolizija: 1-širok hodnik; mačke ni mogoče obiti
 function solid(x, z) {
   const c = Math.round(x / CELL + (COLS - 1) / 2);
   const r = Math.round(z / CELL + (ROWS - 1) / 2);
   const cell = cellAt(r, c);
   if (!cell || !PATHI.has(cell)) return true;          // izven hodnika = stena
+  if (catBlocked.has(cell)) return true;               // speča mačka zapira pot
   const cx = (c - (COLS - 1) / 2) * CELL, cz = (r - (ROWS - 1) / 2) * CELL;
   const lx = x - cx, lz = z - cz, e = CELL / 2 - WALL / 2;
   if (lx > e && !pathNeighbor(cell, 0, 1)) return true;
@@ -124,16 +128,17 @@ function buildWorld() {
   });
 }
 
-/* lebdeč sirček ob mački (nežno se vrti — animira ga engine.onStep) */
-const spinners = [];
-function addCheeseAt(cell, scale) {
+/* lebdeč sirček ob mački (nežno se vrti; pobereš ga, ko prideš mimo) */
+const cheeses = [];   // {group, cell, big, taken}
+function addCheeseAt(cell, scale, big) {
   const w = cellToWorld(cell.r, cell.c);
   const ch = makeCheese(scale);
   ch.position.set(w.x, 0.25, w.z);
   ch.userData.baseY = 0.25;
   engine.add(ch);
-  spinners.push(ch);
-  return ch;
+  const rec = { group: ch, cell, big: !!big, taken: false };
+  cheeses.push(rec);
+  return rec;
 }
 
 /* ===========================================================
@@ -238,37 +243,240 @@ player.position.set(startW.x, 0, startW.z);
 engine.add(player);
 engine.setPlayer(player);
 
-// boss je na PREDZADNJI celici, največji sir na ZADNJI (za bossom) — kot pri malih mačkah.
-// tri speče mačke razporejene po poti pred bossom; vsaka ima sirček na naslednji celici
+// boss je na PREDZADNJI celici, največji sir na ZADNJI (za bossom).
+// tri speče mačke razporejene po poti pred bossom; vsaka blokira hodnik in ima sirček za sabo
 const bossIdx = L - 2;
 const catIdx = [Math.floor(bossIdx * 0.30), Math.floor(bossIdx * 0.55), Math.floor(bossIdx * 0.80)];
 const catFurs = ["#caa46a", "#b0b6bd", "#d59a6a"];
+const catData = [];
 catIdx.forEach((idx, i) => {
   const pc = PATH[idx], w = cellToWorld(pc.r, pc.c);
   const cat = makeCat({ fur: catFurs[i], scale: 1.0 + i * 0.05 });
   cat.position.set(w.x, 0, w.z);
   cat.rotation.y = faceDir(pc, PATH[idx - 1] || PATH[idx + 1]);
   engine.add(cat);
-  // sirček na naslednji celici poti (za mačko)
-  addCheeseAt(PATH[idx + 1] || pc, 0.7);
+  addCheeseAt(PATH[idx + 1] || pc, 0.7, false);
+  catData.push({ cell: pc, group: cat, solved: false, isBoss: false, count: 5, passMin: 2, num: i + 1 });
+  catBlocked.add(pc);
 });
-
-// veliki boss (predzadnja celica) + NAJVEČJI sir na celici ZA njim
 const bossC = PATH[bossIdx];
 const boss = makeCat({ fur: "#8a8f98", scale: 1.8 });
 const bw = cellToWorld(bossC.r, bossC.c);
 boss.position.set(bw.x, 0, bw.z);
 boss.rotation.y = faceDir(bossC, PATH[bossIdx - 1] || bossC);
 engine.add(boss);
-addCheeseAt(PATH[L - 1], 1.6);   // največji sir za bossom
+addCheeseAt(PATH[L - 1], 1.6, true);   // največji sir za bossom
+catData.push({ cell: bossC, group: boss, solved: false, isBoss: true, count: 10, passMin: 4, num: 0 });
+catBlocked.add(bossC);
 
-// nežno vrtenje vseh sirčkov
+/* ===========================================================
+   IGRA: izbira miške, težavnost, življenja, srečanja, zmaga
+   =========================================================== */
+const LANG = (typeof localStorage !== "undefined" && localStorage.getItem("azv-lang") === "en") ? "en" : "sl";
+const overlay = document.getElementById("ui-overlay");
+
+const MICE = [
+  { op: "add", sym: "+", name: { sl: "Plusko", en: "Plusko" }, tunic: "#3a7bd5", desc: { sl: "seštevanje", en: "addition" } },
+  { op: "sub", sym: "−", name: { sl: "Minka", en: "Minka" }, tunic: "#e2663b", desc: { sl: "odštevanje", en: "subtraction" } },
+  { op: "mul", sym: "×", name: { sl: "Krat", en: "Krat" }, tunic: "#7a4ed0", desc: { sl: "množenje", en: "multiplication" } },
+  { op: "div", sym: "÷", name: { sl: "Delko", en: "Delko" }, tunic: "#2ca06a", desc: { sl: "deljenje", en: "division" } },
+];
+const DIFFS = [
+  { id: "easy", name: { sl: "LAHKO", en: "EASY" }, lives: 5, range: { add: 10, sub: 10, mul: 5, div: 5 } },
+  { id: "med", name: { sl: "SREDNJE", en: "MEDIUM" }, lives: 4, range: { add: 20, sub: 20, mul: 10, div: 10 } },
+  { id: "hard", name: { sl: "TEŽKO", en: "HARD" }, lives: 3, range: { add: 50, sub: 50, mul: 12, div: 12 } },
+];
+const T = {
+  sl: {
+    pickMouse: "Izberi bojevniško miš", pickMouseSub: "Vsaka se bori z drugo računsko operacijo",
+    pickDiff: "Izberi težavnost", lives: "življenja",
+    catTitle: (n) => "Speča mačka " + n + " / 3", bossTitle: "VELIKA MAČKA 😼",
+    opSub: (o) => "Reši račune (" + o + ")",
+    pass: "Vse pravilno! 😴 Mačka spi naprej — greš mimo.",
+    scratch: "Mačka se je zbudila in te opraskala! 🐱💢  −1 življenje. Poskusi znova.",
+    eat: "Ojoj! Mačka te je pojedla 😼  −1 življenje. Nazaj na začetek labirinta.",
+    next: "Naprej", retry: "Znova",
+    win: "ZMAGA! 🧀🎉", winSub: "Premagal si veliko mačko in dobil VELIKI SIR! Bravo!",
+    over: "KONEC 💔", overSub: "Zmanjkalo ti je življenj.",
+    again: "Še enkrat",
+    start: "Začni",
+  },
+  en: {
+    pickMouse: "Choose a warrior mouse", pickMouseSub: "Each fights with a different math operation",
+    pickDiff: "Choose difficulty", lives: "lives",
+    catTitle: (n) => "Sleeping cat " + n + " / 3", bossTitle: "BIG CAT 😼",
+    opSub: (o) => "Solve the problems (" + o + ")",
+    pass: "All correct! 😴 The cat sleeps on — you pass.",
+    scratch: "The cat woke up and scratched you! 🐱💢  −1 life. Try again.",
+    eat: "Oh no! The cat ate you 😼  −1 life. Back to the start of the maze.",
+    next: "Next", retry: "Again",
+    win: "VICTORY! 🧀🎉", winSub: "You beat the big cat and got the BIG CHEESE! Well done!",
+    over: "GAME OVER 💔", overSub: "You ran out of lives.",
+    again: "Play again",
+    start: "Start",
+  },
+}[LANG];
+
+let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncounter = false;
+
+/* ---- CSS za zaslone + HUD ---- */
+(function injectUi() {
+  const s = document.createElement("style");
+  s.textContent = `
+  #ui-overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:10;padding:10px;}
+  #ui-overlay.show{display:flex;}
+  .bm-card{background:#fdfdf7;border:5px solid #2b2b2b;border-radius:20px;padding:18px 22px;width:min(88%,560px);
+    box-shadow:0 10px 30px rgba(0,0,0,.45);font-family:"Baloo 2",sans-serif;text-align:center;color:#1a1a1a;}
+  .bm-h{font-weight:800;font-size:24px;margin:0 0 4px;}
+  .bm-sub{color:#666;font-size:14px;margin:0 0 14px;}
+  .bm-mice{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .bm-mouse{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:3px solid #2b2b2b;background:#fff;cursor:pointer;text-align:left;font-family:inherit;}
+  .bm-mouse:active{transform:scale(.97);}
+  .bm-sym{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:800;flex:0 0 auto;}
+  .bm-mname{font-weight:800;font-size:20px;} .bm-mdesc{color:#666;font-size:13px;}
+  .bm-diffs{display:flex;flex-direction:column;gap:10px;}
+  .bm-diff{font-family:inherit;font-weight:800;font-size:22px;padding:14px;border-radius:14px;border:3px solid #2b2b2b;background:#eaf1ff;cursor:pointer;display:flex;justify-content:space-between;}
+  .bm-diff:active{transform:scale(.98);}
+  .bm-btn{font-family:inherit;font-weight:800;font-size:20px;padding:12px 26px;border-radius:14px;border:3px solid #2b2b2b;background:#ffd23b;cursor:pointer;margin-top:14px;}
+  .bm-btn:active{transform:scale(.97);}
+  .bm-msg{font-size:20px;margin:6px 0 4px;line-height:1.4;}
+  .bm-hud{position:absolute;top:10px;left:12px;z-index:8;font-family:"Baloo 2",sans-serif;font-size:22px;
+    background:rgba(0,0,0,.35);color:#fff;padding:4px 12px;border-radius:20px;letter-spacing:2px;display:none;}
+  `;
+  document.head.appendChild(s);
+})();
+
+const hud = document.createElement("div");
+hud.className = "bm-hud";
+document.getElementById("stage").appendChild(hud);
+function updateHud() { hud.style.display = gameOn ? "block" : "none"; hud.textContent = "❤".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, (diff.lives - lives))); }
+
+function showScreen(html) { overlay.innerHTML = '<div class="bm-card">' + html + "</div>"; overlay.classList.add("show"); return overlay.querySelector(".bm-card"); }
+function hideScreen() { overlay.classList.remove("show"); overlay.innerHTML = ""; }
+
+/* ---- izbira miške ---- */
+function showMouseSelect() {
+  engine.paused = true; gameOn = false; updateHud();
+  const card = showScreen('<div class="bm-h">' + T.pickMouse + '</div><div class="bm-sub">' + T.pickMouseSub + '</div><div class="bm-mice"></div>');
+  const grid = card.querySelector(".bm-mice");
+  MICE.forEach((m) => {
+    const b = document.createElement("button"); b.className = "bm-mouse";
+    b.innerHTML = '<span class="bm-sym" style="background:' + m.tunic + '">' + m.sym + '</span><span><div class="bm-mname">' + m.name[LANG] + '</div><div class="bm-mdesc">' + m.desc[LANG] + '</div></span>';
+    b.onclick = () => { chosenMouse = m; recolorPlayer(m.tunic); showDiffSelect(); };
+    grid.appendChild(b);
+  });
+}
+function recolorPlayer(tunic) {
+  // jopič (telo) miši v barvo izbrane operacije
+  if (player.children[0] && player.children[0].material) player.children[0].material.color.set(tunic);
+}
+/* ---- izbira težavnosti ---- */
+function showDiffSelect() {
+  const card = showScreen('<div class="bm-h">' + T.pickDiff + '</div><div class="bm-diffs"></div>');
+  const list = card.querySelector(".bm-diffs");
+  DIFFS.forEach((d) => {
+    const b = document.createElement("button"); b.className = "bm-diff";
+    b.innerHTML = "<span>" + d.name[LANG] + '</span><span style="color:#e23b3b">' + "❤".repeat(d.lives) + "</span>";
+    b.onclick = () => { diff = d; lives = d.lives; startGame(); };
+    list.appendChild(b);
+  });
+}
+/* ---- začetek igre ---- */
+function startGame() {
+  hideScreen(); gameOn = true; inEncounter = false; engine.paused = false; updateHud();
+}
+/* ---- sporočilo (rezultat srečanja) ---- */
+function showMessage(msg, btnLabel) {
+  return new Promise((resolve) => {
+    const card = showScreen('<div class="bm-msg">' + msg + '</div>');
+    const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = btnLabel;
+    b.onclick = () => { hideScreen(); resolve(); };
+    card.appendChild(b);
+  });
+}
+
+/* ---- pravila srečanja ---- */
+function loseLife() { lives--; updateHud(); }
+function rangeFor(op) { return diff.range[op]; }
+
+function resetToStart() {
+  // nazaj na začetek labirinta — vse mačke spet nerešene in blokirajo pot
+  catData.forEach((cat) => { cat.solved = false; catBlocked.add(cat.cell); });
+  const w = cellToWorld(PATH[0].r, PATH[0].c);
+  player.position.set(w.x, 0, w.z);
+  engine.camTarget.set(w.x, 0, w.z);
+}
+
+async function startEncounter(cat) {
+  inEncounter = true; engine.paused = true;
+  const title = cat.isBoss ? T.bossTitle : T.catTitle(cat.num);
+  const sub = T.opSub(chosenMouse.sym);
+  while (true) {
+    const { correct } = await runQuiz({ mount: overlay, op: chosenMouse.op, count: cat.count, range: rangeFor(chosenMouse.op), title, sub, lang: LANG });
+    if (correct === cat.count) {                    // vse pravilno → mimo
+      cat.solved = true;
+      catBlocked.delete(cat.cell);
+      await showMessage(T.pass, T.next);
+      break;
+    }
+    if (correct >= cat.passMin) {                   // opraskan → izgubi življenje, znova
+      loseLife();
+      if (lives <= 0) { await gameOver(); return; }
+      await showMessage(T.scratch, T.retry);
+      continue;
+    }
+    // pojeden → izgubi življenje, nazaj na začetek
+    loseLife();
+    if (lives <= 0) { await gameOver(); return; }
+    await showMessage(T.eat, T.next);
+    resetToStart();
+    break;
+  }
+  inEncounter = false; engine.paused = false;
+}
+
+async function gameOver() {
+  const card = showScreen('<div class="bm-h">' + T.over + '</div><div class="bm-sub">' + T.overSub + "</div>");
+  const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
+  b.onclick = () => location.reload();
+  card.appendChild(b);
+}
+async function win() {
+  gameOn = false; updateHud();
+  const card = showScreen('<div class="bm-h">' + T.win + '</div><div class="bm-sub">' + T.winSub + "</div>");
+  const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
+  b.onclick = () => location.reload();
+  card.appendChild(b);
+}
+
+/* ---- glavna zanka igre: vrtenje sirčkov, sprožitev srečanj, pobiranje sira ---- */
 engine.onStep = () => {
   const t = performance.now();
-  spinners.forEach((ch, i) => { ch.rotation.y += 0.02; ch.position.y = ch.userData.baseY + Math.sin(t * 0.003 + i) * 0.08; });
+  cheeses.forEach((c, i) => { if (!c.taken) { c.group.rotation.y += 0.02; c.group.position.y = c.group.userData.baseY + Math.sin(t * 0.003 + i) * 0.08; } });
+  if (!gameOn || inEncounter || engine.paused) return;
+  const p = player.position;
+  // sprožitev srečanja ob speči mački (inEncounter prepreči ponovno sprožitev)
+  for (const cat of catData) {
+    if (cat.solved) continue;
+    const w = cellToWorld(cat.cell.r, cat.cell.c);
+    if (Math.hypot(p.x - w.x, p.z - w.z) < CELL * 0.95) {
+      startEncounter(cat);
+      return;
+    }
+  }
+  // pobiranje sirčkov
+  for (const c of cheeses) {
+    if (c.taken) continue;
+    const w = cellToWorld(c.cell.r, c.cell.c);
+    if (Math.hypot(p.x - w.x, p.z - w.z) < 1.6) {
+      c.taken = true; engine.remove(c.group);
+      if (c.big) win();
+    }
+  }
 };
 
 engine.start();
+showMouseSelect();
 
 /* ---------- mobilno: skrij akcijska gumba (premik je joystick) ---------- */
 (function () {
