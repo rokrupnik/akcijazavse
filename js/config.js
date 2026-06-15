@@ -102,6 +102,18 @@ const SITE = {
       comic: "korencki",
       game: "games/korencki.html",
     },
+    {
+      id: "invazija-zombijev",
+      author: "simon",
+      cover: "assets/invazija-zombijev/cover.webp",
+      title: { sl: "Invazija zombijev", en: "Zombie Invasion" },
+      blurb: {
+        sl: "Vsi ljudje so postali zombiji! Le en najstnik jih lahko reši. Bori se z minigunom in kijem skozi gozdni labirint, premagaj veliko zombijevo glavo — zdravilo pa je najlepša beseda na svetu.",
+        en: "Everyone turned into zombies! Only one teenager can save them. Fight with a minigun and a club through the forest maze, beat the giant zombie head — the cure is the nicest word in the world.",
+      },
+      comic: "invazija-zombijev",
+      game: "games/invazija-zombijev.html",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
@@ -144,6 +156,20 @@ const SITE = {
         "assets/korencki/page-3.webp",
         "assets/korencki/page-4.webp",
         "assets/korencki/page-5.webp",
+      ],
+    },
+    "invazija-zombijev": {
+      author: "simon",
+      title: { sl: "Invazija zombijev", en: "Zombie Invasion" },
+      intro: {
+        sl: "Vse se je začelo z eno samo zombijsko muho — pičila je človeka in invazija se je začela. Drug za drugim so vsi ljudje postali zombiji. Le en najstnik je ostal. Bo našel najlepšo besedo na svetu in vse ozdravil? Preberi, kako se konča!",
+        en: "It all started with a single zombie fly — it bit a person and the invasion began. One by one, everyone turned into a zombie. Only one teenager was left. Will he find the nicest word in the world and cure them all? Read how it ends!",
+      },
+      pages: [
+        "assets/invazija-zombijev/page-1.webp",
+        "assets/invazija-zombijev/page-2.webp",
+        "assets/invazija-zombijev/page-3.webp",
+        "assets/invazija-zombijev/page-4.webp",
       ],
     },
   },

@@ -37,6 +37,8 @@
       rk_hint:       'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za plavanje &nbsp;•&nbsp; <b>Preslednica</b> = mehurček &nbsp;•&nbsp; <b>M</b> = klofuta z repom<br />📱 Telefon: <b>joystick</b> (spodaj levo) za plavanje, <b>gumba</b> (spodaj desno) za mehurček in rep<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikansko ribo!',
       k_title:       "🥕 Noč strašnih korenčkov 🐱",
       k_hint:        'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za hojo &nbsp;•&nbsp; <b>Preslednica</b> = krempljček &nbsp;•&nbsp; <b>M</b> = ugriz<br />📱 Telefon: <b>joystick</b> (spodaj levo) za hojo, <b>gumba</b> (spodaj desno) za krempelj in ugriz<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikanski korenček!',
+      iz_title:      "🧟 Invazija zombijev 🧟",
+      iz_hint:       'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za premik &nbsp;•&nbsp; <b>Preslednica</b> = minigun &nbsp;•&nbsp; <b>M</b> = kij<br />📱 Telefon: <b>joystick</b> (spodaj levo) za premik, <b>gumba</b> (spodaj desno) za minigun in kij<br />💡 Ozdravi zombije nazaj v ljudi in premagaj veliko zombijevo glavo!',
     },
     en: {
       site_title:    "Action for everyone",
@@ -67,6 +69,8 @@
       rk_hint:       'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to swim &nbsp;•&nbsp; <b>Space</b> = bubble &nbsp;•&nbsp; <b>M</b> = tail slap<br />📱 Phone: <b>joystick</b> (bottom-left) to swim, <b>buttons</b> (bottom-right) for bubble & tail<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant fish!',
       k_title:       "🥕 Night of the Scary Carrots 🐱",
       k_hint:        'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to walk &nbsp;•&nbsp; <b>Space</b> = claw &nbsp;•&nbsp; <b>M</b> = bite<br />📱 Phone: <b>joystick</b> (bottom-left) to walk, <b>buttons</b> (bottom-right) for claw & bite<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant carrot!',
+      iz_title:      "🧟 Zombie Invasion 🧟",
+      iz_hint:       'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to move &nbsp;•&nbsp; <b>Space</b> = minigun &nbsp;•&nbsp; <b>M</b> = club<br />📱 Phone: <b>joystick</b> (bottom-left) to move, <b>buttons</b> (bottom-right) for minigun & club<br />💡 Cure the zombies back into people and beat the giant zombie head!',
     },
   };
 
