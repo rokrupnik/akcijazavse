@@ -90,7 +90,7 @@ function solid(x, z) {
 const engine = new IsoEngine(canvas, {
   viewSize: 8.5,
   bg: "#0c1322",
-  camOffset: new THREE.Vector3(0, 15, 16),   // nagib ~43° (več globine/3D), gor = gor
+  camOffset: new THREE.Vector3(0, 18, 13.5),   // dvignjena kamera (pogled z višje), gor = gor
   solid,
   speed: 6.0,
   radius: 0.42,
@@ -142,87 +142,101 @@ function addCheeseAt(cell, scale, big) {
 }
 
 /* ===========================================================
-   MODELI (modularni — kocke)
+   MODELI (modularni — kocke + krogle, low-poly)
    =========================================================== */
+function ball(r, color, opts = {}) {
+  const m = new THREE.Mesh(new THREE.SphereGeometry(r, 14, 10), new THREE.MeshLambertMaterial({ color }));
+  m.castShadow = opts.cast !== false; m.receiveShadow = opts.receive !== false; return m;
+}
+
 function makeMouse(opts = {}) {
-  const fur = opts.fur || "#b9b3ad";
+  const fur = opts.fur || "#c7c1ba";
   const tunic = opts.tunic || "#3a7bd5";
   const g = new THREE.Group();
-  // telo (jopič)
-  const body = box(0.62, 0.62, 0.5, tunic); body.position.y = 0.5; g.add(body);
-  // glava (spredaj = +Z)
-  const head = box(0.5, 0.46, 0.42, fur); head.position.set(0, 0.78, 0.28); g.add(head);
-  // smrček
-  const snout = box(0.22, 0.2, 0.2, fur); snout.position.set(0, 0.72, 0.5); g.add(snout);
-  const nose = box(0.08, 0.08, 0.08, "#e98aa6", { cast: false }); nose.position.set(0, 0.72, 0.62); g.add(nose);
-  // ušesa (rožnata)
+  // telo (jopič) + pas
+  const body = box(0.6, 0.6, 0.48, tunic); body.position.y = 0.48; g.add(body);
+  const belt = box(0.64, 0.1, 0.52, "#2a2a33", { cast: false }); belt.position.y = 0.3; g.add(belt);
+  // glava (okrogla)
+  const head = ball(0.33, fur); head.scale.set(1, 0.95, 1.05); head.position.set(0, 0.92, 0.16); g.add(head);
+  const snout = ball(0.16, fur); snout.position.set(0, 0.84, 0.42); g.add(snout);
+  const nose = ball(0.06, "#e98aa6", { cast: false }); nose.position.set(0, 0.84, 0.56); g.add(nose);
+  // velika okrogla ušesa z rožnato sredino
   for (const sx of [-1, 1]) {
-    const ear = box(0.26, 0.26, 0.06, "#f0a9c0"); ear.position.set(sx * 0.24, 1.02, 0.22); g.add(ear);
+    const ear = ball(0.2, fur); ear.scale.set(1, 1, 0.5); ear.position.set(sx * 0.28, 1.16, 0.1); g.add(ear);
+    const inner = ball(0.12, "#f0a9c0", { cast: false }); inner.scale.set(1, 1, 0.45); inner.position.set(sx * 0.28, 1.16, 0.16); g.add(inner);
   }
   // oči
-  for (const sx of [-1, 1]) {
-    const eye = box(0.07, 0.07, 0.06, "#1a1a1a", { cast: false }); eye.position.set(sx * 0.13, 0.82, 0.49); g.add(eye);
+  for (const sx of [-1, 1]) { const e = ball(0.055, "#1a1a1a", { cast: false }); e.position.set(sx * 0.13, 0.94, 0.42); g.add(e); }
+  // brki
+  for (const sx of [-1, 1]) for (const dy of [0.02, -0.05]) {
+    const w = box(0.3, 0.012, 0.012, "#ded7cc", { cast: false }); w.position.set(sx * 0.3, 0.82 + dy, 0.46); w.rotation.y = sx * 0.35; g.add(w);
   }
-  // rep (zadaj)
-  const tail = box(0.1, 0.1, 0.5, "#e9b7c4"); tail.position.set(0, 0.3, -0.42); g.add(tail);
+  // rep
+  const tail = box(0.09, 0.09, 0.5, "#e9b7c4"); tail.position.set(0, 0.28, -0.42); g.add(tail);
   // roke
-  for (const sx of [-1, 1]) {
-    const arm = box(0.16, 0.34, 0.16, tunic); arm.position.set(sx * 0.4, 0.5, 0.06); g.add(arm);
-  }
-  // meč v desni roki
+  for (const sx of [-1, 1]) { const arm = box(0.15, 0.32, 0.15, tunic); arm.position.set(sx * 0.4, 0.48, 0.06); g.add(arm); }
+  // ščit (leva roka)
+  const shield = new THREE.Mesh(new THREE.CylinderGeometry(0.2, 0.2, 0.06, 16), new THREE.MeshLambertMaterial({ color: "#b5651d" }));
+  shield.rotation.x = Math.PI / 2; shield.position.set(-0.5, 0.5, 0.2); shield.castShadow = true; g.add(shield);
+  const sboss = ball(0.06, "#ffd23b", { cast: false }); sboss.position.set(-0.5, 0.5, 0.26); g.add(sboss);
+  // meč (desna roka)
   const sword = new THREE.Group();
-  const blade = box(0.08, 0.66, 0.08, "#dfe6ef"); blade.position.y = 0.33; sword.add(blade);
-  const guard = box(0.28, 0.08, 0.1, "#b88a2a"); guard.position.y = 0.02; sword.add(guard);
+  const blade = box(0.07, 0.66, 0.07, "#e6ecf4"); blade.position.y = 0.33; sword.add(blade);
+  const guard = box(0.26, 0.08, 0.1, "#c9952f"); guard.position.y = 0.02; sword.add(guard);
   const hilt = box(0.08, 0.18, 0.08, "#8a5a22"); hilt.position.y = -0.1; sword.add(hilt);
-  sword.position.set(0.5, 0.55, 0.1);
-  g.add(sword);
+  sword.position.set(0.5, 0.56, 0.1); g.add(sword);
   // noge
-  for (const sx of [-1, 1]) {
-    const leg = box(0.18, 0.2, 0.2, "#5a4636"); leg.position.set(sx * 0.16, 0.1, 0.02); g.add(leg);
-  }
+  for (const sx of [-1, 1]) { const leg = box(0.18, 0.2, 0.22, "#5a4636"); leg.position.set(sx * 0.15, 0.1, 0.04); g.add(leg); }
   return g;
 }
 
 function makeCat(opts = {}) {
   const fur = opts.fur || "#caa46a";
+  const inner = "#e7a6b4";
   const scale = opts.scale || 1;
   const g = new THREE.Group();
-  // ležeče/zvito telo
-  const body = box(1.0, 0.6, 1.3, fur); body.position.y = 0.35; g.add(body);
+  // zvit "štruca" trup (nizek, zaobljen)
+  const body = ball(0.62, fur); body.scale.set(1.05, 0.62, 1.15); body.position.set(0, 0.42, -0.05); g.add(body);
+  // proge (temnejši odtenek krzna)
+  for (let i = -1; i <= 1; i++) { const st = box(0.1, 0.5, 0.5, fur, { cast: false }); st.material.color.offsetHSL(0, 0, -0.1); st.position.set(i * 0.32, 0.55, -0.05); g.add(st); }
   // glava
-  const head = box(0.7, 0.6, 0.6, fur); head.position.set(0, 0.55, 0.78); g.add(head);
-  // ušesa
+  const head = ball(0.42, fur); head.position.set(0, 0.6, 0.62); g.add(head);
+  // ušesa (trikotna) z rožnato
   for (const sx of [-1, 1]) {
-    const ear = box(0.22, 0.26, 0.14, fur); ear.position.set(sx * 0.24, 0.95, 0.7); g.add(ear);
-    const inner = box(0.1, 0.14, 0.06, "#e7a6b4", { cast: false }); inner.position.set(sx * 0.24, 0.95, 0.78); g.add(inner);
+    const ear = box(0.24, 0.28, 0.12, fur); ear.position.set(sx * 0.26, 0.98, 0.6); ear.rotation.z = sx * 0.2; g.add(ear);
+    const ein = box(0.1, 0.14, 0.06, inner, { cast: false }); ein.position.set(sx * 0.26, 0.99, 0.67); g.add(ein);
   }
-  // zaprte oči (črti)
+  // zaspane (zaprte) oči — rahlo navzdol zaprte
   for (const sx of [-1, 1]) {
-    const eye = box(0.18, 0.04, 0.06, "#3a2a1a", { cast: false }); eye.position.set(sx * 0.17, 0.58, 1.08); g.add(eye);
+    const eye = box(0.17, 0.05, 0.06, "#2e2218", { cast: false }); eye.position.set(sx * 0.17, 0.6, 0.99); eye.rotation.z = sx * 0.25; g.add(eye);
   }
-  // smrček
-  const nose = box(0.12, 0.1, 0.08, "#d56a86", { cast: false }); nose.position.set(0, 0.45, 1.12); g.add(nose);
-  // proge
-  for (let i = -1; i <= 1; i++) {
-    const stripe = box(0.12, 0.62, 0.14, "#a07f4e", { cast: false }); stripe.position.set(i * 0.3, 0.36, 0.1); g.add(stripe);
-  }
-  // rep, ovit naokoli
-  const tail = box(0.16, 0.16, 0.9, fur); tail.position.set(0.5, 0.2, -0.3); tail.rotation.y = 0.5; g.add(tail);
-  // tačke spredaj
-  for (const sx of [-1, 1]) {
-    const paw = box(0.24, 0.18, 0.3, fur); paw.position.set(sx * 0.3, 0.12, 0.95); g.add(paw);
-  }
+  const nose = box(0.12, 0.09, 0.08, "#d56a86", { cast: false }); nose.position.set(0, 0.48, 1.0); g.add(nose);
+  // tačke spredaj (podvite)
+  for (const sx of [-1, 1]) { const paw = ball(0.16, fur); paw.scale.set(1, 0.7, 1.2); paw.position.set(sx * 0.28, 0.14, 0.7); g.add(paw); }
+  // rep, ovit okoli telesa
+  const tail = box(0.16, 0.16, 1.0, fur); tail.position.set(0.55, 0.2, -0.1); tail.rotation.y = 0.6; g.add(tail);
+  const tailTip = ball(0.1, fur); tailTip.position.set(0.2, 0.2, 0.5); g.add(tailTip);
+  // lebdeči "z z z" (spanje)
+  const zG = new THREE.Group();
+  [[0.0, 0.0, 0.16], [0.18, 0.28, 0.22], [0.4, 0.62, 0.3]].forEach((p) => {
+    const z = box(p[2], 0.05, 0.05, "#ffffff", { cast: false }); z.position.set(0.5 + p[0], 1.2 + p[1], 0.4); z.rotation.z = 0.5;
+    const z2 = box(0.05, p[2] * 0.9, 0.05, "#ffffff", { cast: false }); z2.position.set(0.5 + p[0], 1.2 + p[1] - p[2] * 0.4, 0.4); z2.rotation.z = -0.6;
+    zG.add(z); zG.add(z2);
+  });
+  zG.name = "zzz"; g.add(zG);
   g.scale.setScalar(scale);
   return g;
 }
 
 function makeCheese(scale = 1) {
   const g = new THREE.Group();
-  const wedge = box(0.7, 0.5, 0.7, "#ffcf33"); wedge.position.y = 0.35; g.add(wedge);
-  // luknje
-  for (const p of [[-0.2, 0.4, 0.2], [0.18, 0.5, -0.1], [0.05, 0.25, 0.25]]) {
-    const hole = box(0.12, 0.12, 0.12, "#e0a800", { cast: false });
-    hole.position.set(p[0], p[1], p[2]); g.add(hole);
+  // klin (trikotna prizma)
+  const wedge = new THREE.Mesh(new THREE.CylinderGeometry(0.5, 0.5, 0.62, 3, 1), new THREE.MeshLambertMaterial({ color: "#ffcf33" }));
+  wedge.rotation.x = Math.PI / 2; wedge.rotation.z = Math.PI / 6; wedge.position.y = 0.4;
+  wedge.castShadow = true; g.add(wedge);
+  // luknje (temne pike)
+  for (const p of [[-0.14, 0.42, 0.32], [0.16, 0.5, 0.32], [0.0, 0.3, 0.32], [-0.05, 0.45, -0.32]]) {
+    const hole = ball(0.07, "#e0a800", { cast: false }); hole.position.set(p[0], p[1], p[2]); g.add(hole);
   }
   g.scale.setScalar(scale);
   return g;
@@ -239,6 +253,7 @@ const L = PATH.length;
 // igralec (bojevniška miš) na začetku poti
 const startW = cellToWorld(PATH[0].r, PATH[0].c);
 const player = makeMouse({ fur: "#b9b3ad", tunic: "#3a7bd5" });
+player.scale.setScalar(1.4);   // malo večja figura (boljša vidljivost)
 player.position.set(startW.x, 0, startW.z);
 engine.add(player);
 engine.setPlayer(player);
@@ -251,21 +266,21 @@ const catFurs = ["#caa46a", "#b0b6bd", "#d59a6a"];
 const catData = [];
 catIdx.forEach((idx, i) => {
   const pc = PATH[idx], w = cellToWorld(pc.r, pc.c);
-  const cat = makeCat({ fur: catFurs[i], scale: 1.0 + i * 0.05 });
+  const cat = makeCat({ fur: catFurs[i], scale: 1.3 + i * 0.07 });
   cat.position.set(w.x, 0, w.z);
   cat.rotation.y = faceDir(pc, PATH[idx - 1] || PATH[idx + 1]);
   engine.add(cat);
-  addCheeseAt(PATH[idx + 1] || pc, 0.7, false);
+  addCheeseAt(PATH[idx + 1] || pc, 0.95, false);
   catData.push({ cell: pc, group: cat, solved: false, isBoss: false, count: 5, passMin: 2, num: i + 1 });
   catBlocked.add(pc);
 });
 const bossC = PATH[bossIdx];
-const boss = makeCat({ fur: "#8a8f98", scale: 1.8 });
+const boss = makeCat({ fur: "#8a8f98", scale: 2.2 });
 const bw = cellToWorld(bossC.r, bossC.c);
 boss.position.set(bw.x, 0, bw.z);
 boss.rotation.y = faceDir(bossC, PATH[bossIdx - 1] || bossC);
 engine.add(boss);
-addCheeseAt(PATH[L - 1], 1.6, true);   // največji sir za bossom
+addCheeseAt(PATH[L - 1], 2.0, true);   // največji sir za bossom
 catData.push({ cell: bossC, group: boss, solved: false, isBoss: true, count: 10, passMin: 4, num: 0 });
 catBlocked.add(bossC);
 
@@ -274,6 +289,37 @@ catBlocked.add(bossC);
    =========================================================== */
 const LANG = (typeof localStorage !== "undefined" && localStorage.getItem("azv-lang") === "en") ? "en" : "sl";
 const overlay = document.getElementById("ui-overlay");
+
+/* ---------- zvok (WebAudio, brez datotek) ---------- */
+let actx = null;
+function ac() { try { if (!actx) actx = new (window.AudioContext || window.webkitAudioContext)(); if (actx.state === "suspended") actx.resume(); } catch (e) {} return actx; }
+function beep(f, dur, type, vol, slide) {
+  const a = ac(); if (!a) return;
+  const t = a.currentTime, o = a.createOscillator(), g = a.createGain();
+  o.type = type || "square"; o.frequency.setValueAtTime(f, t);
+  if (slide) o.frequency.exponentialRampToValueAtTime(Math.max(1, slide), t + dur);
+  g.gain.setValueAtTime(vol || 0.15, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  o.connect(g).connect(a.destination); o.start(t); o.stop(t + dur + 0.02);
+}
+function noise(dur, vol) {
+  const a = ac(); if (!a) return;
+  const t = a.currentTime, buf = a.createBuffer(1, Math.max(1, a.sampleRate * dur), a.sampleRate), d = buf.getChannelData(0);
+  for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  const s = a.createBufferSource(); s.buffer = buf; const g = a.createGain();
+  g.gain.setValueAtTime(vol || 0.1, t); g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+  s.connect(g).connect(a.destination); s.start(t);
+}
+function seq(notes, gap, type, vol) { notes.forEach((f, i) => setTimeout(() => beep(f, gap * 1.5, type, vol), i * gap * 1000)); }
+const SFX = {
+  click() { beep(520, 0.05, "square", 0.1, 720); },
+  encounter() { beep(170, 0.28, "sawtooth", 0.13, 90); noise(0.12, 0.05); },     // mačka zasluti
+  pass() { seq([523, 659, 784, 1047], 0.09, "triangle", 0.16); },                // spi naprej
+  scratch() { noise(0.16, 0.16); beep(720, 0.12, "sawtooth", 0.12, 300); },      // praska
+  eat() { beep(150, 0.3, "sawtooth", 0.2, 60); noise(0.22, 0.12); },             // poje
+  cheese() { seq([784, 988, 1319], 0.07, "triangle", 0.16); },                   // mljask
+  win() { seq([523, 659, 784, 1047, 1319, 1568], 0.13, "triangle", 0.2); },
+  over() { seq([400, 330, 260, 180], 0.16, "sawtooth", 0.18); },
+};
 
 const MICE = [
   { op: "add", sym: "+", name: { sl: "Plusko", en: "Plusko" }, tunic: "#3a7bd5", desc: { sl: "seštevanje", en: "addition" } },
@@ -284,7 +330,7 @@ const MICE = [
 const DIFFS = [
   { id: "easy", name: { sl: "LAHKO", en: "EASY" }, lives: 5, range: { add: 10, sub: 10, mul: 5, div: 5 } },
   { id: "med", name: { sl: "SREDNJE", en: "MEDIUM" }, lives: 4, range: { add: 20, sub: 20, mul: 10, div: 10 } },
-  { id: "hard", name: { sl: "TEŽKO", en: "HARD" }, lives: 3, range: { add: 50, sub: 50, mul: 12, div: 12 } },
+  { id: "hard", name: { sl: "TEŽKO", en: "HARD" }, lives: 3, range: { add: 100, sub: 100, mul: 12, div: 12 } },
 ];
 const T = {
   sl: {
@@ -300,6 +346,14 @@ const T = {
     over: "KONEC 💔", overSub: "Zmanjkalo ti je življenj.",
     again: "Še enkrat",
     start: "Začni",
+    title: "BOJEVNIŠKE MIŠKE", tagline: "Pogumne miške, ki se borijo z matematiko!",
+    start2: "Izberi miš 🐭",
+    story: [
+      "V Mišjem kraljestvu je največji zaklad VELIKI SIR. 🧀",
+      "A zastražile so ga lene mačke, ki dremajo po labirintu Mačjega gradu. 😼",
+      "Le najpogumnejše bojevniške miške se upajo mimo — z močjo MATEMATIKE! ⚔️",
+      "Izberi svojo miš in se prebij do velikega sira. Pogum, bojevnik!",
+    ],
   },
   en: {
     pickMouse: "Choose a warrior mouse", pickMouseSub: "Each fights with a different math operation",
@@ -314,6 +368,14 @@ const T = {
     over: "GAME OVER 💔", overSub: "You ran out of lives.",
     again: "Play again",
     start: "Start",
+    title: "WARRIOR MICE", tagline: "Brave mice who fight with math!",
+    start2: "Choose a mouse 🐭",
+    story: [
+      "In the Mouse Kingdom the greatest treasure is the BIG CHEESE. 🧀",
+      "But lazy cats guard it, dozing through the maze of Cat Castle. 😼",
+      "Only the bravest warrior mice dare to pass — with the power of MATH! ⚔️",
+      "Choose your mouse and fight your way to the big cheese. Be brave, warrior!",
+    ],
   },
 }[LANG];
 
@@ -354,6 +416,23 @@ function updateHud() { hud.style.display = gameOn ? "block" : "none"; hud.textCo
 function showScreen(html) { overlay.innerHTML = '<div class="bm-card">' + html + "</div>"; overlay.classList.add("show"); return overlay.querySelector(".bm-card"); }
 function hideScreen() { overlay.classList.remove("show"); overlay.innerHTML = ""; }
 
+/* ---- naslovnica + zgodba ---- */
+function showIntro() {
+  engine.paused = true; gameOn = false; updateHud();
+  const card = showScreen('<div style="font-size:56px;line-height:1.1;margin-bottom:2px">🐭⚔️</div>' +
+    '<div class="bm-h" style="font-size:30px">' + T.title + '</div><div class="bm-sub">' + T.tagline + "</div>");
+  const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.start;
+  b.onclick = () => { SFX.click(); showStory(0); };
+  card.appendChild(b);
+}
+function showStory(i) {
+  if (i >= T.story.length) { showMouseSelect(); return; }
+  const card = showScreen('<div class="bm-sub">' + (i + 1) + " / " + T.story.length + '</div><div class="bm-msg">' + T.story[i] + "</div>");
+  const b = document.createElement("button"); b.className = "bm-btn";
+  b.textContent = (i === T.story.length - 1) ? T.start2 : T.next;
+  b.onclick = () => { SFX.click(); showStory(i + 1); };
+  card.appendChild(b);
+}
 /* ---- izbira miške ---- */
 function showMouseSelect() {
   engine.paused = true; gameOn = false; updateHud();
@@ -362,7 +441,7 @@ function showMouseSelect() {
   MICE.forEach((m) => {
     const b = document.createElement("button"); b.className = "bm-mouse";
     b.innerHTML = '<span class="bm-sym" style="background:' + m.tunic + '">' + m.sym + '</span><span><div class="bm-mname">' + m.name[LANG] + '</div><div class="bm-mdesc">' + m.desc[LANG] + '</div></span>';
-    b.onclick = () => { chosenMouse = m; recolorPlayer(m.tunic); showDiffSelect(); };
+    b.onclick = () => { SFX.click(); chosenMouse = m; recolorPlayer(m.tunic); showDiffSelect(); };
     grid.appendChild(b);
   });
 }
@@ -377,7 +456,7 @@ function showDiffSelect() {
   DIFFS.forEach((d) => {
     const b = document.createElement("button"); b.className = "bm-diff";
     b.innerHTML = "<span>" + d.name[LANG] + '</span><span style="color:#e23b3b">' + "❤".repeat(d.lives) + "</span>";
-    b.onclick = () => { diff = d; lives = d.lives; startGame(); };
+    b.onclick = () => { SFX.click(); diff = d; lives = d.lives; startGame(); };
     list.appendChild(b);
   });
 }
@@ -390,7 +469,7 @@ function showMessage(msg, btnLabel) {
   return new Promise((resolve) => {
     const card = showScreen('<div class="bm-msg">' + msg + '</div>');
     const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = btnLabel;
-    b.onclick = () => { hideScreen(); resolve(); };
+    b.onclick = () => { SFX.click(); hideScreen(); resolve(); };
     card.appendChild(b);
   });
 }
@@ -409,6 +488,7 @@ function resetToStart() {
 
 async function startEncounter(cat) {
   inEncounter = true; engine.paused = true;
+  SFX.encounter();
   const title = cat.isBoss ? T.bossTitle : T.catTitle(cat.num);
   const sub = T.opSub(chosenMouse.sym);
   while (true) {
@@ -416,17 +496,18 @@ async function startEncounter(cat) {
     if (correct === cat.count) {                    // vse pravilno → mimo
       cat.solved = true;
       catBlocked.delete(cat.cell);
+      SFX.pass();
       await showMessage(T.pass, T.next);
       break;
     }
     if (correct >= cat.passMin) {                   // opraskan → izgubi življenje, znova
-      loseLife();
+      loseLife(); SFX.scratch();
       if (lives <= 0) { await gameOver(); return; }
       await showMessage(T.scratch, T.retry);
       continue;
     }
     // pojeden → izgubi življenje, nazaj na začetek
-    loseLife();
+    loseLife(); SFX.eat();
     if (lives <= 0) { await gameOver(); return; }
     await showMessage(T.eat, T.next);
     resetToStart();
@@ -436,6 +517,7 @@ async function startEncounter(cat) {
 }
 
 async function gameOver() {
+  SFX.over();
   const card = showScreen('<div class="bm-h">' + T.over + '</div><div class="bm-sub">' + T.overSub + "</div>");
   const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
   b.onclick = () => location.reload();
@@ -443,6 +525,7 @@ async function gameOver() {
 }
 async function win() {
   gameOn = false; updateHud();
+  SFX.win();
   const card = showScreen('<div class="bm-h">' + T.win + '</div><div class="bm-sub">' + T.winSub + "</div>");
   const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
   b.onclick = () => location.reload();
@@ -455,9 +538,14 @@ engine.onStep = () => {
   cheeses.forEach((c, i) => { if (!c.taken) { c.group.rotation.y += 0.02; c.group.position.y = c.group.userData.baseY + Math.sin(t * 0.003 + i) * 0.08; } });
   if (!gameOn || inEncounter || engine.paused) return;
   const p = player.position;
-  // sprožitev srečanja ob speči mački (inEncounter prepreči ponovno sprožitev)
+  // sprožitev srečanja ob speči mački: miš mora biti na celici, ki je PO HODNIKU
+  // povezana z mačjo celico (brez stene vmes) IN dovolj blizu
+  const pc = worldToCell(p.x, p.z);
+  const pcell = cellAt(pc.r, pc.c);
   for (const cat of catData) {
     if (cat.solved) continue;
+    if (!pcell || !PATHI.has(pcell) || !PATHI.has(cat.cell)) continue;
+    if (Math.abs(PATHI.get(pcell) - PATHI.get(cat.cell)) !== 1) continue;   // ni sosednja po poti = stena vmes
     const w = cellToWorld(cat.cell.r, cat.cell.c);
     if (Math.hypot(p.x - w.x, p.z - w.z) < CELL * 0.95) {
       startEncounter(cat);
@@ -470,13 +558,13 @@ engine.onStep = () => {
     const w = cellToWorld(c.cell.r, c.cell.c);
     if (Math.hypot(p.x - w.x, p.z - w.z) < 1.6) {
       c.taken = true; engine.remove(c.group);
-      if (c.big) win();
+      if (c.big) win(); else SFX.cheese();
     }
   }
 };
 
 engine.start();
-showMouseSelect();
+showIntro();
 
 /* ---------- mobilno: skrij akcijska gumba (premik je joystick) ---------- */
 (function () {
