@@ -321,6 +321,60 @@ const SFX = {
   over() { seq([400, 330, 260, 180], 0.16, "sawtooth", 0.18); },
 };
 
+/* ---------- glasba v ozadju (mirna med hojo, napeta med računanjem) ---------- */
+const Music = (function () {
+  function mtof(m) { return 440 * Math.pow(2, (m - 69) / 12); }
+  // mirna (durova pentatonika)
+  const EX_MEL = [72, -1, 79, -1, 76, -1, 74, -1, 72, -1, 67, -1, 69, -1, 71, -1];
+  const EX_BASS = [48, -1, -1, -1, 55, -1, -1, -1, 53, -1, -1, -1, 55, -1, -1, -1];
+  // napeta (molova, gostejša, hitrejša)
+  const BT_MEL = [69, 72, 71, 69, 67, 69, 71, 72, 69, 67, 65, 64, 65, 67, 69, 71];
+  const BT_BASS = [45, 45, -1, 45, 48, 48, -1, 48, 41, 41, -1, 41, 43, 43, -1, 43];
+
+  let timer = null, nextT = 0, step = 0, mood = "explore", master = null, started = false, muted = false, vol = 0.42;
+
+  function tone(freq, t, dur, type, v) {
+    const a = ac(); if (!a || !master) return;
+    const o = a.createOscillator(), g = a.createGain();
+    o.type = type; o.frequency.setValueAtTime(freq, t);
+    g.gain.setValueAtTime(0, t); g.gain.linearRampToValueAtTime(v, t + 0.02);
+    g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+    o.connect(g).connect(master); o.start(t); o.stop(t + dur + 0.02);
+  }
+  function playStep(s, t) {
+    if (mood === "explore") {
+      if (EX_MEL[s] > 0) tone(mtof(EX_MEL[s]), t, 0.5, "triangle", 0.085);
+      if (EX_BASS[s] > 0) tone(mtof(EX_BASS[s]), t, 0.7, "sine", 0.11);
+    } else {
+      if (BT_MEL[s] > 0) tone(mtof(BT_MEL[s]), t, 0.16, "square", 0.055);
+      if (BT_BASS[s] > 0) tone(mtof(BT_BASS[s]), t, 0.18, "sawtooth", 0.085);
+    }
+  }
+  function scheduler() {
+    const a = ac(); if (!a) return;
+    while (nextT < a.currentTime + 0.12) {
+      playStep(step, nextT);
+      nextT += (mood === "battle") ? 0.15 : 0.28;   // tempo: napeta hitrejša
+      step = (step + 1) % 16;
+    }
+  }
+  return {
+    start() {
+      const a = ac(); if (!a || started) return; started = true;
+      master = a.createGain(); master.gain.value = 0; master.connect(a.destination);
+      master.gain.linearRampToValueAtTime(muted ? 0 : vol, a.currentTime + 1.2);
+      nextT = a.currentTime + 0.1; step = 0;
+      timer = setInterval(scheduler, 25);
+    },
+    setMood(m) { mood = m; },
+    toggleMute() {
+      muted = !muted; const a = ac();
+      if (master && a) master.gain.linearRampToValueAtTime(muted ? 0 : vol, a.currentTime + 0.2);
+      return !muted;
+    },
+  };
+})();
+
 const MICE = [
   { op: "add", sym: "+", name: { sl: "Plusko", en: "Plusko" }, tunic: "#3a7bd5", desc: { sl: "seštevanje", en: "addition" } },
   { op: "sub", sym: "−", name: { sl: "Minka", en: "Minka" }, tunic: "#e2663b", desc: { sl: "odštevanje", en: "subtraction" } },
@@ -404,6 +458,8 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
   .bm-msg{font-size:20px;margin:6px 0 4px;line-height:1.4;}
   .bm-hud{position:absolute;top:10px;left:12px;z-index:8;font-family:"Baloo 2",sans-serif;font-size:22px;
     background:rgba(0,0,0,.35);color:#fff;padding:4px 12px;border-radius:20px;letter-spacing:2px;display:none;}
+  .bm-music{position:absolute;top:10px;right:12px;z-index:8;width:38px;height:38px;border:none;border-radius:50%;
+    background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer;display:none;}
   `;
   document.head.appendChild(s);
 })();
@@ -411,6 +467,11 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
 const hud = document.createElement("div");
 hud.className = "bm-hud";
 document.getElementById("stage").appendChild(hud);
+// gumb za glasbo (vklop/izklop)
+const musicBtn = document.createElement("button");
+musicBtn.className = "bm-music"; musicBtn.textContent = "🔊"; musicBtn.title = "Glasba";
+document.getElementById("stage").appendChild(musicBtn);
+musicBtn.addEventListener("click", () => { musicBtn.textContent = Music.toggleMute() ? "🔊" : "🔇"; });
 function updateHud() { hud.style.display = gameOn ? "block" : "none"; hud.textContent = "❤".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, (diff.lives - lives))); }
 
 function showScreen(html) { overlay.innerHTML = '<div class="bm-card">' + html + "</div>"; overlay.classList.add("show"); return overlay.querySelector(".bm-card"); }
@@ -463,6 +524,8 @@ function showDiffSelect() {
 /* ---- začetek igre ---- */
 function startGame() {
   hideScreen(); gameOn = true; inEncounter = false; engine.paused = false; updateHud();
+  musicBtn.style.display = "block";
+  Music.start(); Music.setMood("explore");
 }
 /* ---- sporočilo (rezultat srečanja) ---- */
 function showMessage(msg, btnLabel) {
@@ -488,7 +551,7 @@ function resetToStart() {
 
 async function startEncounter(cat) {
   inEncounter = true; engine.paused = true;
-  SFX.encounter();
+  SFX.encounter(); Music.setMood("battle");   // glasba postane napeta
   const title = cat.isBoss ? T.bossTitle : T.catTitle(cat.num);
   const sub = T.opSub(chosenMouse.sym);
   while (true) {
@@ -514,10 +577,11 @@ async function startEncounter(cat) {
     break;
   }
   inEncounter = false; engine.paused = false;
+  Music.setMood("explore");   // nazaj na mirno
 }
 
 async function gameOver() {
-  SFX.over();
+  SFX.over(); Music.setMood("explore");
   const card = showScreen('<div class="bm-h">' + T.over + '</div><div class="bm-sub">' + T.overSub + "</div>");
   const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
   b.onclick = () => location.reload();
@@ -525,7 +589,7 @@ async function gameOver() {
 }
 async function win() {
   gameOn = false; updateHud();
-  SFX.win();
+  SFX.win(); Music.setMood("explore");
   const card = showScreen('<div class="bm-h">' + T.win + '</div><div class="bm-sub">' + T.winSub + "</div>");
   const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
   b.onclick = () => location.reload();
