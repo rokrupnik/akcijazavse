@@ -114,6 +114,18 @@ const SITE = {
       comic: "invazija-zombijev",
       game: "games/invazija-zombijev.html",
     },
+    {
+      id: "napad-palck",
+      author: "jakob",
+      cover: "assets/napad-palck/cover.webp",
+      title: { sl: "Napad palčk", en: "Attack of the Dashes" },
+      blurb: {
+        sl: "Drugačna igra: 1D dvoboj! Dve palčki (črtici) si streljata drobne črtice — ko se dve zaletita, naredita POK! Vsak zadetek skrči nasprotnika. Igraj proti programu ali z bratom. Poudarek na zvokih!",
+        en: "A different game: a 1D duel! Two dashes shoot tiny dashes at each other — when two collide, they go POW! Every hit shrinks the rival. Play vs the computer or a sibling. Big on sound!",
+      },
+      comic: "napad-palck",
+      game: "games/napad-palck.html",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
@@ -170,6 +182,17 @@ const SITE = {
         "assets/invazija-zombijev/page-2.webp",
         "assets/invazija-zombijev/page-3.webp",
         "assets/invazija-zombijev/page-4.webp",
+      ],
+    },
+    "napad-palck": {
+      author: "jakob",
+      title: { sl: "Napad palčk", en: "Attack of the Dashes" },
+      intro: {
+        sl: "Dve palčki si stojita nasproti čez velik list — in obe zavpijeta: »V NAPAD!« Tako se začne dvoboj palčk. Kdo bo zmagal?",
+        en: "Two dashes face off across a big sheet — and both yell: “CHARGE!” That's how the duel of the dashes begins. Who will win?",
+      },
+      pages: [
+        "assets/napad-palck/page-1.webp",
       ],
     },
   },

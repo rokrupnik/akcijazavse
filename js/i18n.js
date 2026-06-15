@@ -39,6 +39,8 @@
       k_hint:        'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za hojo &nbsp;•&nbsp; <b>Preslednica</b> = krempljček &nbsp;•&nbsp; <b>M</b> = ugriz<br />📱 Telefon: <b>joystick</b> (spodaj levo) za hojo, <b>gumba</b> (spodaj desno) za krempelj in ugriz<br />💡 Poberi <b>srčke</b> ❤️ za življenje. Premagaj velikanski korenček!',
       iz_title:      "🧟 Invazija zombijev 🧟",
       iz_hint:       'Tipke: <b>↑ ↓ ← →</b> ali <b>W A S D</b> za premik &nbsp;•&nbsp; <b>Preslednica</b> = minigun &nbsp;•&nbsp; <b>M</b> = kij<br />📱 Telefon: <b>joystick</b> (spodaj levo) za premik, <b>gumba</b> (spodaj desno) za minigun in kij<br />💡 Ozdravi zombije nazaj v ljudi in premagaj veliko zombijevo glavo!',
+      np_title:      "➖ Napad palčk ➖",
+      np_hint:       '1D dvoboj! <b>Modri</b>: <b>A</b> = strel, <b>Q</b> = močan naboj &nbsp;•&nbsp; <b>Rdeči</b> (2 igralca): <b>L</b> = strel, <b>O</b> = močan naboj<br />📱 Telefon: <b>tapni</b> svojo polovico = strel, <b>drži</b> = močan naboj<br />💡 Naboji: 3 strele, nato premor 2–3 s. Izstrelka se ob trku izničita (POK!). Vsak zadetek skrči nasprotnika — kdor se skrči v piko, izgubi!',
     },
     en: {
       site_title:    "Action for everyone",
@@ -71,6 +73,8 @@
       k_hint:        'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to walk &nbsp;•&nbsp; <b>Space</b> = claw &nbsp;•&nbsp; <b>M</b> = bite<br />📱 Phone: <b>joystick</b> (bottom-left) to walk, <b>buttons</b> (bottom-right) for claw & bite<br />💡 Collect <b>hearts</b> ❤️ for life. Beat the giant carrot!',
       iz_title:      "🧟 Zombie Invasion 🧟",
       iz_hint:       'Keys: <b>↑ ↓ ← →</b> or <b>W A S D</b> to move &nbsp;•&nbsp; <b>Space</b> = minigun &nbsp;•&nbsp; <b>M</b> = club<br />📱 Phone: <b>joystick</b> (bottom-left) to move, <b>buttons</b> (bottom-right) for minigun & club<br />💡 Cure the zombies back into people and beat the giant zombie head!',
+      np_title:      "➖ Attack of the Dashes ➖",
+      np_hint:       '1D duel! <b>Blue</b>: <b>A</b> = shoot, <b>Q</b> = charged shot &nbsp;•&nbsp; <b>Red</b> (2 players): <b>L</b> = shoot, <b>O</b> = charged shot<br />📱 Phone: <b>tap</b> your half = shoot, <b>hold</b> = charged shot<br />💡 Ammo: 3 shots, then a 2–3 s pause. Two shots cancel out on impact (POW!). A hit shrinks your rival — shrink to a dot and you lose!',
     },
   };
 
