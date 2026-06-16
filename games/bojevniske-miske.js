@@ -149,12 +149,26 @@ function ball(r, color, opts = {}) {
   m.castShadow = opts.cast !== false; m.receiveShadow = opts.receive !== false; return m;
 }
 
+/* znak računske operacije na prsih (iz belih kock) */
+function chestEmblem(sym) {
+  const g = new THREE.Group(); const C = "#ffffff", T = 0.055, DZ = 0.05;
+  const bar = (w, h, rz) => { const b = box(w, h, DZ, C, { cast: false }); if (rz) b.rotation.z = rz; g.add(b); };
+  const dot = (dy) => { const d = box(0.075, 0.075, DZ, C, { cast: false }); d.position.set(0, dy, 0); g.add(d); };
+  if (sym === "+") { bar(0.26, T); bar(T, 0.26); }
+  else if (sym === "−") { bar(0.26, T); }
+  else if (sym === "×") { bar(0.28, T, Math.PI / 4); bar(0.28, T, -Math.PI / 4); }
+  else if (sym === "÷") { bar(0.26, T); dot(0.13); dot(-0.13); }
+  return g;
+}
+
 function makeMouse(opts = {}) {
   const fur = opts.fur || "#c7c1ba";
   const tunic = opts.tunic || "#3a7bd5";
   const g = new THREE.Group();
   // telo (jopič) + pas
   const body = box(0.6, 0.6, 0.48, tunic); body.position.y = 0.48; g.add(body);
+  // znak operacije na prsih
+  if (opts.sym) { const em = chestEmblem(opts.sym); em.position.set(0, 0.5, 0.26); g.add(em); }
   const belt = box(0.64, 0.1, 0.52, "#2a2a33", { cast: false }); belt.position.y = 0.3; g.add(belt);
   // glava (okrogla)
   const head = ball(0.33, fur); head.scale.set(1, 0.95, 1.05); head.position.set(0, 0.92, 0.16); g.add(head);
@@ -252,7 +266,7 @@ const L = PATH.length;
 
 // igralec (bojevniška miš) na začetku poti
 const startW = cellToWorld(PATH[0].r, PATH[0].c);
-const player = makeMouse({ fur: "#b9b3ad", tunic: "#3a7bd5" });
+let player = makeMouse({ fur: "#b9b3ad", tunic: "#3a7bd5" });
 player.scale.setScalar(1.4);   // malo večja figura (boljša vidljivost)
 player.position.set(startW.x, 0, startW.z);
 engine.add(player);
@@ -445,9 +459,14 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
     box-shadow:0 10px 30px rgba(0,0,0,.45);font-family:"Baloo 2",sans-serif;text-align:center;color:#1a1a1a;}
   .bm-h{font-weight:800;font-size:24px;margin:0 0 4px;}
   .bm-sub{color:#666;font-size:14px;margin:0 0 14px;}
-  .bm-mice{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-  .bm-mouse{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;border:3px solid #2b2b2b;background:#fff;cursor:pointer;text-align:left;font-family:inherit;}
-  .bm-mouse:active{transform:scale(.97);}
+  .bm-selrow{display:flex;gap:12px;align-items:stretch;flex-wrap:wrap;justify-content:center;}
+  .bm-mice{display:flex;flex-direction:column;gap:8px;flex:1 1 240px;min-width:230px;}
+  .bm-mouse{display:flex;align-items:center;gap:12px;padding:10px;border-radius:14px;border:3px solid #2b2b2b;background:#fff;cursor:pointer;text-align:left;font-family:inherit;}
+  .bm-mouse:active{transform:scale(.98);}
+  .bm-mouse.on{border-color:#2f6fe0;background:#e7f0ff;box-shadow:0 0 0 3px rgba(47,111,224,.45) inset;}
+  .bm-prevwrap{flex:0 0 180px;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#eef2f8;border-radius:16px;border:3px solid #2b2b2b;padding:6px;}
+  .bm-prev{width:170px;height:185px;display:block;}
+  .bm-prevname{font-weight:800;font-size:16px;color:#1a1a1a;margin-top:2px;}
   .bm-sym{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:800;flex:0 0 auto;}
   .bm-mname{font-weight:800;font-size:20px;} .bm-mdesc{color:#666;font-size:13px;}
   .bm-diffs{display:flex;flex-direction:column;gap:10px;}
@@ -500,21 +519,67 @@ function showStory(i) {
   b.onclick = () => { SFX.click(); showStory(i + 1); };
   card.appendChild(b);
 }
-/* ---- izbira miške ---- */
+/* ---- vrteči 3D predogled miši (lastni mini-renderer) ---- */
+let preview = null;
+function getPreview() {
+  if (preview) return preview;
+  const cv = document.createElement("canvas"); cv.className = "bm-prev"; cv.width = 240; cv.height = 260;
+  const r = new THREE.WebGLRenderer({ canvas: cv, antialias: true, alpha: true });
+  r.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2)); r.setSize(240, 260, false);
+  const sc = new THREE.Scene();
+  sc.add(new THREE.HemisphereLight(0xffffff, 0x556070, 1.05));
+  const dl = new THREE.DirectionalLight(0xffffff, 0.7); dl.position.set(3, 6, 4); sc.add(dl);
+  const cam = new THREE.PerspectiveCamera(35, 240 / 260, 0.1, 50);
+  cam.position.set(0, 1.4, 3.6); cam.lookAt(0, 0.72, 0);
+  const holder = new THREE.Group(); sc.add(holder);
+  let raf = null;
+  function loop() { holder.rotation.y += 0.02; r.render(sc, cam); raf = requestAnimationFrame(loop); }
+  preview = {
+    canvas: cv,
+    setMouse(m) { while (holder.children.length) holder.remove(holder.children[0]); holder.add(makeMouse({ fur: "#c7c1ba", tunic: m.tunic, sym: m.sym })); },
+    start() { if (!raf) loop(); },
+    stop() { if (raf) { cancelAnimationFrame(raf); raf = null; } },
+  };
+  return preview;
+}
+/* prezgradi igralčevo miš z izbrano barvo + znakom operacije */
+function setMouseModel(m) {
+  const pos = player.position.clone(), rotY = player.rotation.y, sc = player.scale.x;
+  engine.remove(player);
+  player = makeMouse({ fur: "#c7c1ba", tunic: m.tunic, sym: m.sym });
+  player.scale.setScalar(sc); player.position.copy(pos); player.rotation.y = rotY;
+  engine.add(player); engine.setPlayer(player);
+}
+
+/* ---- izbira miške (z vrtečim predogledom) ---- */
 function showMouseSelect() {
   engine.paused = true; gameOn = false; updateHud();
-  const card = showScreen('<div class="bm-h">' + T.pickMouse + '</div><div class="bm-sub">' + T.pickMouseSub + '</div><div class="bm-mice"></div>');
+  const card = showScreen('<div class="bm-h">' + T.pickMouse + '</div><div class="bm-sub">' + T.pickMouseSub +
+    '</div><div class="bm-selrow"><div class="bm-mice"></div>' +
+    '<div class="bm-prevwrap"><div class="bm-prevname"></div></div></div>');
   const grid = card.querySelector(".bm-mice");
+  const prevWrap = card.querySelector(".bm-prevwrap");
+  const nameEl = card.querySelector(".bm-prevname");
+  const prev = getPreview();
+  prevWrap.insertBefore(prev.canvas, nameEl);
+  prev.start();
+  let sel = chosenMouse || MICE[0];
+  const buttons = [];
+  function select(m) {
+    sel = m; prev.setMouse(m);
+    nameEl.textContent = m.name[LANG] + "  " + m.sym;
+    buttons.forEach((b, i) => b.classList.toggle("on", MICE[i] === m));
+  }
   MICE.forEach((m) => {
     const b = document.createElement("button"); b.className = "bm-mouse";
     b.innerHTML = '<span class="bm-sym" style="background:' + m.tunic + '">' + m.sym + '</span><span><div class="bm-mname">' + m.name[LANG] + '</div><div class="bm-mdesc">' + m.desc[LANG] + '</div></span>';
-    b.onclick = () => { SFX.click(); chosenMouse = m; recolorPlayer(m.tunic); showDiffSelect(); };
-    grid.appendChild(b);
+    b.onclick = () => { SFX.click(); select(m); };
+    grid.appendChild(b); buttons.push(b);
   });
-}
-function recolorPlayer(tunic) {
-  // jopič (telo) miši v barvo izbrane operacije
-  if (player.children[0] && player.children[0].material) player.children[0].material.color.set(tunic);
+  select(sel);
+  const go = document.createElement("button"); go.className = "bm-btn"; go.textContent = T.next + " ▶";
+  go.onclick = () => { SFX.click(); chosenMouse = sel; setMouseModel(sel); prev.stop(); showDiffSelect(); };
+  card.appendChild(go);
 }
 /* ---- izbira težavnosti ---- */
 function showDiffSelect() {
