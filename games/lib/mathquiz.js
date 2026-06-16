@@ -97,7 +97,8 @@ export function runQuiz(opts) {
 
     function next(ok) {
       results[i] = ok ? "ok" : "bad"; if (ok) correct++; i++;
-      setTimeout(render, 700);
+      // ob napačnem odgovoru počakaj dlje, da igralec vidi pravilni odgovor
+      setTimeout(render, ok ? 700 : 1700);
     }
 
     function render() {
