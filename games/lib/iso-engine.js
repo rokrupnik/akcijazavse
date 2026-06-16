@@ -62,6 +62,15 @@ export class IsoEngine {
     this._bindInput();
     this._resize();
     window.addEventListener("resize", () => this._resize());
+    // ResizeObserver ujame VSAKO spremembo velikosti platna (celozaslonsko, pseudo-fs,
+    // obrat zaslona, okno) — setSize z updateStyle=false ne spremeni CSS velikosti, zato ni zanke
+    if (window.ResizeObserver) {
+      this._ro = new ResizeObserver(() => this._resize());
+      this._ro.observe(this.canvas);
+    } else {
+      ["fullscreenchange", "webkitfullscreenchange", "orientationchange"].forEach((ev) =>
+        window.addEventListener(ev, () => setTimeout(() => this._resize(), 60)));
+    }
 
     this._last = 0; this._acc = 0;
     this.STEP = 1000 / 60;

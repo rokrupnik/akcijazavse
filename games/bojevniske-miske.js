@@ -389,7 +389,7 @@ const DIFFS = [
 const T = {
   sl: {
     pickMouse: "Izberi bojevniško miš", pickMouseSub: "Vsaka se bori z drugo računsko operacijo",
-    pickDiff: "Izberi težavnost", lives: "življenja",
+    pickDiff: "Izberi težavnost", lives: "življenja", upTo: "računi do",
     catTitle: (n) => "Speča mačka " + n + " / 3", bossTitle: "VELIKA MAČKA 😼",
     opSub: (o) => "Reši račune (" + o + ")",
     pass: "Vse pravilno! 😴 Mačka spi naprej — greš mimo.",
@@ -411,7 +411,7 @@ const T = {
   },
   en: {
     pickMouse: "Choose a warrior mouse", pickMouseSub: "Each fights with a different math operation",
-    pickDiff: "Choose difficulty", lives: "lives",
+    pickDiff: "Choose difficulty", lives: "lives", upTo: "numbers up to",
     catTitle: (n) => "Sleeping cat " + n + " / 3", bossTitle: "BIG CAT 😼",
     opSub: (o) => "Solve the problems (" + o + ")",
     pass: "All correct! 😴 The cat sleeps on — you pass.",
@@ -451,8 +451,9 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
   .bm-sym{width:46px;height:46px;border-radius:12px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:30px;font-weight:800;flex:0 0 auto;}
   .bm-mname{font-weight:800;font-size:20px;} .bm-mdesc{color:#666;font-size:13px;}
   .bm-diffs{display:flex;flex-direction:column;gap:10px;}
-  .bm-diff{font-family:inherit;font-weight:800;font-size:22px;padding:14px;border-radius:14px;border:3px solid #2b2b2b;background:#eaf1ff;cursor:pointer;display:flex;justify-content:space-between;}
+  .bm-diff{font-family:inherit;font-weight:800;font-size:22px;padding:12px 14px;border-radius:14px;border:3px solid #2b2b2b;background:#eaf1ff;cursor:pointer;display:flex;justify-content:space-between;align-items:center;text-align:left;}
   .bm-diff:active{transform:scale(.98);}
+  .bm-diffsub{font-size:13px;color:#666;font-weight:400;margin-top:2px;}
   .bm-btn{font-family:inherit;font-weight:800;font-size:20px;padding:12px 26px;border-radius:14px;border:3px solid #2b2b2b;background:#ffd23b;cursor:pointer;margin-top:14px;}
   .bm-btn:active{transform:scale(.97);}
   .bm-msg{font-size:20px;margin:6px 0 4px;line-height:1.4;}
@@ -460,6 +461,11 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
     background:rgba(0,0,0,.35);color:#fff;padding:4px 12px;border-radius:20px;letter-spacing:2px;display:none;}
   .bm-music{position:absolute;top:10px;right:12px;z-index:8;width:38px;height:38px;border:none;border-radius:50%;
     background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer;display:none;}
+  /* celozaslonsko: mute pod izhodni gumb (da se ne prekrivata) */
+  body.azv-fs .bm-music{top:66px;}
+  /* celozaslonsko: 3D platno naj ZAPOLNI zaslon (kamera se prilagodi) — ne ohranjaj razmerja */
+  #stage:fullscreen canvas#game, #stage:-webkit-full-screen canvas#game,
+  body.azv-pseudofs #stage canvas#game{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;}
   `;
   document.head.appendChild(s);
 })();
@@ -516,7 +522,8 @@ function showDiffSelect() {
   const list = card.querySelector(".bm-diffs");
   DIFFS.forEach((d) => {
     const b = document.createElement("button"); b.className = "bm-diff";
-    b.innerHTML = "<span>" + d.name[LANG] + '</span><span style="color:#e23b3b">' + "❤".repeat(d.lives) + "</span>";
+    b.innerHTML = "<span><div>" + d.name[LANG] + '</div><div class="bm-diffsub">' + T.upTo + " " + d.range[chosenMouse.op] + " (" + chosenMouse.sym + ")</div></span>" +
+      '<span style="color:#e23b3b">' + "❤".repeat(d.lives) + "</span>";
     b.onclick = () => { SFX.click(); diff = d; lives = d.lives; startGame(); };
     list.appendChild(b);
   });
@@ -635,4 +642,11 @@ showIntro();
   const hide = (sel) => { const el = document.querySelector(sel); if (el) el.style.display = "none"; };
   if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", () => hide(".game-controls"));
   else hide(".game-controls");
+})();
+
+/* ob preklopu celozaslonskega zanesljivo osveži velikost 3D platna (tudi pri pseudo-fs na iPhonu,
+   kjer ni resize dogodka) — sproži window resize, ki ga pogon obdela */
+(function () {
+  const ping = () => [80, 350, 700].forEach((d) => setTimeout(() => window.dispatchEvent(new Event("resize")), d));
+  document.querySelectorAll(".fs-enter, .fs-exit").forEach((b) => b.addEventListener("click", ping));
 })();
