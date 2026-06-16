@@ -482,6 +482,10 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
     background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer;display:none;}
   /* celozaslonsko: mute pod izhodni gumb (da se ne prekrivata) */
   body.azv-fs .bm-music{top:66px;}
+  /* celozaslonsko: izhod in mute NAD prekrivnim slojem (#ui-overlay z-index 10),
+     da delujeta tudi med računi/meniji */
+  body.azv-fs .fs-exit{z-index:20;}
+  body.azv-fs .bm-music{z-index:20;}
   /* celozaslonsko: 3D platno naj ZAPOLNI zaslon (kamera se prilagodi) — ne ohranjaj razmerja */
   #stage:fullscreen canvas#game, #stage:-webkit-full-screen canvas#game,
   body.azv-pseudofs #stage canvas#game{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;}
