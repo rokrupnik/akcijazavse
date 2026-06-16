@@ -306,6 +306,10 @@ canvas#game {
    ========================================================= */
 .site-footer { text-align: center; padding: 24px 14px 40px; }
 .site-footer p { color: #666; font-size: 13px; margin-top: 14px; }
+.footer-contact { margin-top: 18px; }
+.footer-contact a { color: #0a6cc2; font-weight: 700; font-size: 14px; text-decoration: none; }
+.footer-contact a:hover { text-decoration: underline; }
+.footer-note { display: block; color: #888; font-size: 11.5px; line-height: 1.45; max-width: 460px; margin: 4px auto 0; }
 
 /* =========================================================
    DONACIJSKO OKNO
