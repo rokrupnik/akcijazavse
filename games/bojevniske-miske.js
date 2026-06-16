@@ -453,12 +453,10 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
 (function injectUi() {
   const s = document.createElement("style");
   s.textContent = `
-  /* prekrivni sloj čez CEL zaslon (modal) — na nizkih platnih (telefon ležeče platno)
-     je sicer premalo prostora in gumbi padejo pod rob */
-  #ui-overlay{position:fixed;inset:0;display:none;align-items:center;justify-content:center;z-index:50;padding:12px;background:rgba(8,10,18,.55);}
+  /* prekrivni sloj znotraj okvirja igre; kartica se po potrebi pomanjša (scale), da se prilega */
+  #ui-overlay{position:absolute;inset:0;display:none;align-items:center;justify-content:center;z-index:10;padding:8px;}
   #ui-overlay.show{display:flex;}
   .bm-card{background:#fdfdf7;border:5px solid #2b2b2b;border-radius:20px;padding:16px 20px;width:min(88%,560px);
-    max-height:calc(100% - 14px);overflow-y:auto;
     box-shadow:0 10px 30px rgba(0,0,0,.45);font-family:"Baloo 2",sans-serif;text-align:center;color:#1a1a1a;}
   .bm-h{font-weight:800;font-size:24px;margin:0 0 4px;}
   .bm-sub{color:#666;font-size:14px;margin:0 0 14px;}
@@ -485,10 +483,10 @@ let chosenMouse = MICE[0], diff = DIFFS[0], lives = 5, gameOn = false, inEncount
     background:rgba(0,0,0,.35);color:#fff;font-size:18px;cursor:pointer;display:none;}
   /* celozaslonsko: mute pod izhodni gumb (da se ne prekrivata) */
   body.azv-fs .bm-music{top:66px;}
-  /* celozaslonsko: izhod in mute NAD prekrivnim slojem (#ui-overlay z-index 50),
+  /* celozaslonsko: izhod in mute NAD prekrivnim slojem (#ui-overlay z-index 10),
      da delujeta tudi med računi/meniji */
-  body.azv-fs .fs-exit{z-index:60;}
-  body.azv-fs .bm-music{z-index:60;}
+  body.azv-fs .fs-exit{z-index:20;}
+  body.azv-fs .bm-music{z-index:20;}
   /* celozaslonsko: 3D platno naj ZAPOLNI zaslon (kamera se prilagodi) — ne ohranjaj razmerja */
   #stage:fullscreen canvas#game, #stage:-webkit-full-screen canvas#game,
   body.azv-pseudofs #stage canvas#game{width:100%!important;height:100%!important;max-width:none!important;max-height:none!important;}
@@ -506,8 +504,34 @@ document.getElementById("stage").appendChild(musicBtn);
 musicBtn.addEventListener("click", () => { musicBtn.textContent = Music.toggleMute() ? "🔊" : "🔇"; });
 function updateHud() { hud.style.display = gameOn ? "block" : "none"; hud.textContent = "❤".repeat(Math.max(0, lives)) + "🖤".repeat(Math.max(0, (diff.lives - lives))); }
 
-function showScreen(html) { overlay.innerHTML = '<div class="bm-card">' + html + "</div>"; overlay.classList.add("show"); return overlay.querySelector(".bm-card"); }
+function showScreen(html) { overlay.innerHTML = '<div class="bm-card">' + html + "</div>"; overlay.classList.add("show"); scheduleFit(); return overlay.querySelector(".bm-card"); }
 function hideScreen() { overlay.classList.remove("show"); overlay.innerHTML = ""; }
+
+/* kartico (.bm-card ali .mq-card) po potrebi pomanjšaj, da se prilega okvirju igre */
+function fitOverlay() {
+  if (!overlay.classList.contains("show")) return;
+  const card = overlay.firstElementChild; if (!card) return;
+  card.style.transformOrigin = "center center";
+  card.style.transform = "none";
+  const st = document.getElementById("stage");
+  const availH = st.clientHeight - 10, availW = st.clientWidth - 10;
+  const ch = card.offsetHeight, cw = card.offsetWidth;
+  if (ch > 0 && cw > 0) {
+    const s = Math.min(1, availH / ch, availW / cw);
+    if (s < 0.999) card.style.transform = "scale(" + s + ")";
+  }
+}
+// izmeri šele po postavitvi (dvojni rAF), da zajamemo končno velikost kartice
+let fitPending = false;
+function scheduleFit() {
+  if (fitPending) return; fitPending = true;
+  requestAnimationFrame(() => requestAnimationFrame(() => { fitPending = false; fitOverlay(); }));
+}
+// ponovno prilagodi ob spremembi vsebine (meniji, kviz) in ob spremembi velikosti okvirja
+new MutationObserver(scheduleFit).observe(overlay, { childList: true, subtree: true });
+window.addEventListener("resize", scheduleFit);
+["fullscreenchange", "webkitfullscreenchange", "orientationchange"].forEach((ev) =>
+  window.addEventListener(ev, () => setTimeout(scheduleFit, 120)));
 
 /* ---- naslovnica + zgodba ---- */
 function showIntro() {
