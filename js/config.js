@@ -138,6 +138,18 @@ const SITE = {
       comic: "bojevniske-miske",
       game: "games/bojevniske-miske.html",
     },
+    {
+      id: "bojevanje-dlak",
+      author: "simon",
+      cover: "assets/bojevanje-dlak/cover.webp",
+      title: { sl: "Bojevanje dlak", en: "Battle of Furs" },
+      blurb: {
+        sl: "3D vesoljska akcija po vzoru Vojne zvezd — z močhrčki! Izberi svojega hrčka (vsak ima svojo črko in posebnost) in se prosto bojuj po vesolju z VODIKOM (mečem iz vrele vode) in pobranimi vodnimi puškami. Premagaj robote, sonde in rakete skozi 4 Marse do robotskega poveljnika!",
+        en: "A 3D space-action game in the spirit of Star Wars — with power-hamsters! Pick your hamster (each has its own letter and perk) and roam freely through space with the WATER SWORD (a blade of boiling water) and guns you grab. Beat robots, probes and rockets across 4 Marses to the robot commander!",
+      },
+      comic: "bojevanje-dlak",
+      game: "games/bojevanje-dlak.html",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */
@@ -216,6 +228,20 @@ const SITE = {
       },
       pages: [
         "assets/bojevniske-miske/page-1.webp",
+      ],
+    },
+    "bojevanje-dlak": {
+      author: "simon",
+      title: { sl: "Bojevanje dlak", en: "Battle of Furs" },
+      intro: {
+        sl: "V daljnem vesolju vlada vojna med močhrčki in roboti. Močhrčki nimajo laserjev — borijo se z vodikom, mečem iz vrele vode! Po tem stripu je nastala 3D vesoljska igra. Poglej bojevanje dlak in se podaj med zvezde!",
+        en: "In far-off space a war rages between power-hamsters and robots. The hamsters have no lasers — they fight with the water sword, a blade of boiling water! This comic inspired the 3D space game. See the battle of furs and head for the stars!",
+      },
+      pages: [
+        "assets/bojevanje-dlak/page-1.webp",
+        "assets/bojevanje-dlak/page-2.webp",
+        "assets/bojevanje-dlak/page-3.webp",
+        "assets/bojevanje-dlak/page-4.webp",
       ],
     },
   },

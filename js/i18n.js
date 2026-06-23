@@ -45,6 +45,8 @@
       np_hint:       '1D dvoboj! <b>Modri</b>: <b>A</b> = strel, <b>Q</b> = močan naboj &nbsp;•&nbsp; <b>Rdeči</b> (2 igralca): <b>L</b> = strel, <b>O</b> = močan naboj<br />📱 Telefon: <b>tapni</b> svojo polovico = strel, <b>drži</b> = močan naboj<br />💡 Naboji: 3 strele, nato premor 2–3 s. Izstrelka se ob trku izničita (POK!). Vsak zadetek skrči nasprotnika — kdor se skrči v piko, izgubi!',
       bm_title:      "🐭 Bojevniške miške ⚔️",
       bm_hint:       'Premikaj se: <b>↑ ↓ ← →</b> ali <b>W A S D</b> &nbsp;•&nbsp; 📱 Telefon: <b>joystick</b> (spodaj levo)<br />💡 Sprehodi se po hodniku mimo spečih mačk. Reši njihove račune, da prideš do velikega sira!',
+      bd_title:      "🐹 Bojevanje dlak ⚔️",
+      bd_hint:       'Premikaj se: <b>↑ ↓ ← →</b> ali <b>W A S D</b> &nbsp;•&nbsp; <b>Preslednica</b> = streljaj &nbsp;•&nbsp; <b>M</b> = vodik (meč)<br />📱 Telefon: <b>joystick</b> (spodaj levo) za premik, <b>gumba</b> (spodaj desno): 💧 streljaj in ⚔️ vodik<br />💡 Prosto se gibaj po vesolju! Premagaj robote, sonde in rakete skozi 4 Marse. Robotom lahko vzameš puško in jo obdržiš.',
     },
     en: {
       site_title:    "Action for everyone",
@@ -83,6 +85,8 @@
       np_hint:       '1D duel! <b>Blue</b>: <b>A</b> = shoot, <b>Q</b> = charged shot &nbsp;•&nbsp; <b>Red</b> (2 players): <b>L</b> = shoot, <b>O</b> = charged shot<br />📱 Phone: <b>tap</b> your half = shoot, <b>hold</b> = charged shot<br />💡 Ammo: 3 shots, then a 2–3 s pause. Two shots cancel out on impact (POW!). A hit shrinks your rival — shrink to a dot and you lose!',
       bm_title:      "🐭 Warrior Mice ⚔️",
       bm_hint:       'Move: <b>↑ ↓ ← →</b> or <b>W A S D</b> &nbsp;•&nbsp; 📱 Phone: <b>joystick</b> (bottom-left)<br />💡 Walk down the corridor past the sleeping cats. Solve their math problems to reach the big cheese!',
+      bd_title:      "🐹 Battle of Furs ⚔️",
+      bd_hint:       'Move: <b>↑ ↓ ← →</b> or <b>W A S D</b> &nbsp;•&nbsp; <b>Space</b> = shoot &nbsp;•&nbsp; <b>M</b> = water sword<br />📱 Phone: <b>joystick</b> (bottom-left) to move, <b>buttons</b> (bottom-right): 💧 shoot and ⚔️ water sword<br />💡 Roam freely through space! Beat robots, probes and rockets across 4 Marses. You can take a robot\'s gun and keep it.',
     },
   };
 
