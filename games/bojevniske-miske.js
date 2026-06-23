@@ -626,6 +626,9 @@ function showDiffSelect() {
 }
 /* ---- začetek igre ---- */
 function startGame() {
+  // ponastavi svet (za ponovno igro brez osveževanja strani — ohrani celozaslonski način)
+  resetToStart();
+  cheeses.forEach((c) => { if (c.taken) { c.taken = false; engine.add(c.group); } });
   hideScreen(); gameOn = true; inEncounter = false; engine.paused = false; updateHud();
   musicBtn.style.display = "block";
   Music.start(); Music.setMood("explore");
@@ -683,11 +686,13 @@ async function startEncounter(cat) {
   Music.setMood("explore");   // nazaj na mirno
 }
 
+/* ponovna igra brez osveževanja strani (ohrani celozaslonski način) */
+function playAgain() { SFX.click(); gameOn = false; inEncounter = false; engine.paused = true; hideScreen(); showMouseSelect(); }
 async function gameOver() {
-  SFX.over(); Music.setMood("explore");
+  gameOn = false; SFX.over(); Music.setMood("explore");
   const card = showScreen('<div class="bm-h">' + T.over + '</div><div class="bm-sub">' + T.overSub + "</div>");
   const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
-  b.onclick = () => location.reload();
+  b.onclick = playAgain;
   card.appendChild(b);
 }
 async function win() {
@@ -695,7 +700,7 @@ async function win() {
   SFX.win(); Music.setMood("explore");
   const card = showScreen('<div class="bm-h">' + T.win + '</div><div class="bm-sub">' + T.winSub + "</div>");
   const b = document.createElement("button"); b.className = "bm-btn"; b.textContent = T.again;
-  b.onclick = () => location.reload();
+  b.onclick = playAgain;
   card.appendChild(b);
 }
 

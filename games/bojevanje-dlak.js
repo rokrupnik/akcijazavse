@@ -301,10 +301,12 @@ const HAMSTERS = [
   { letter: "B", fur: "#cfbfe0", suit: "#7a4ed0", blade: "#c08bff", name: { sl: "Brzina", en: "Speedo" }, perk: "speed", perkTxt: { sl: "hitrejši tek", en: "faster runner" } },
 ];
 
+// cnt = množitelj števila nasprotnikov, aliveAdj = sprememba sočasno živih,
+// rocketMul = množitelj raket, bossMul = množitelj življenj bossa
 const DIFFS = [
-  { id: "easy", name: { sl: "LAHKO", en: "EASY" }, lives: 6, spd: 0.85, dmgRate: 1.0, atk: 0.85 },
-  { id: "med", name: { sl: "SREDNJE", en: "MEDIUM" }, lives: 5, spd: 1.0, dmgRate: 1.0, atk: 1.0 },
-  { id: "hard", name: { sl: "TEŽKO", en: "HARD" }, lives: 4, spd: 1.18, dmgRate: 1.0, atk: 1.25 },
+  { id: "easy", name: { sl: "LAHKO", en: "EASY" }, lives: 7, spd: 0.82, atk: 0.8, cnt: 0.5, aliveAdj: -1, rocketMul: 0.25, bossMul: 0.7 },
+  { id: "med", name: { sl: "SREDNJE", en: "MEDIUM" }, lives: 5, spd: 1.0, atk: 1.0, cnt: 1.0, aliveAdj: 0, rocketMul: 1.0, bossMul: 1.0 },
+  { id: "hard", name: { sl: "TEŽKO", en: "HARD" }, lives: 4, spd: 1.18, atk: 1.25, cnt: 1.2, aliveAdj: 1, rocketMul: 1.3, bossMul: 1.2 },
 ];
 
 // orožja: basic (neskončno), pobrana imajo strelivo
@@ -383,7 +385,7 @@ let fireCd = 0, saberCd = 0, invuln = 0, saberAnim = 0;
 let saberMul = 1, gunCdMul = 1;
 
 // upravljanje nivoja
-let spawnedMin = 0, minRemaining = 0, rocketsLeft = 0;
+let spawnedMin = 0, minRemaining = 0, rocketsLeft = 0, levelMinions = 0, levelMaxAlive = 0;
 let spawnTimer = 0, rocketTimer = 0, introTimer = 0, heartTimer = 0;
 let bossSpawned = false, bossDead = false, transitioning = false;
 
@@ -612,8 +614,10 @@ function startLevel(i) {
   const planet2 = makePlanet(rnd(3.5, 5), lv.planet, null);
   planet2.children[0].material.color.offsetHSL(0.06, 0, 0.06);
   planet2.position.set(rnd(16, 20) * (Math.random() < 0.5 ? -1 : 1), rnd(4.5, 8), -58); backdrop.add(planet2);
-  // števci
-  spawnedMin = 0; minRemaining = lv.minions; rocketsLeft = lv.rockets;
+  // števci (število nasprotnikov se prilagodi izbrani težavnosti)
+  levelMinions = Math.max(2, Math.round(lv.minions * diff.cnt));
+  levelMaxAlive = Math.max(2, lv.maxAlive + diff.aliveAdj);
+  spawnedMin = 0; minRemaining = levelMinions; rocketsLeft = Math.round(lv.rockets * diff.rocketMul);
   bossSpawned = false; bossDead = false;
   spawnTimer = 0; rocketTimer = rnd(2, 4); introTimer = 1.6; heartTimer = rnd(9, 14); transitioning = false;
   Music.setMood("battle");
@@ -663,7 +667,7 @@ function spawnBoss() {
   g.position.set(bx, 0, bz); g.rotation.y = Math.atan2(px - bx, pz - bz);
   engine.add(g);
   const spd = 2.4 * LEVELS[levelIdx].spd * diff.spd;
-  enemies.push({ type: "boss", group: g, hp: 34, r: 1.9, spd, shootCd: 1.2, summonCd: 5, t: 0 });
+  enemies.push({ type: "boss", group: g, hp: Math.round(34 * diff.bossMul), r: 1.9, spd, shootCd: 1.2, summonCd: 5, t: 0 });
   bossSpawned = true;
   showBanner("👑", T.boss);
   updateHud();
@@ -781,17 +785,19 @@ function hurtPlayer(dmg) {
 /* ===========================================================
    ZAKLJUČEK
    =========================================================== */
+/* ponovna igra brez osveževanja strani (ohrani celozaslonski način) */
+function playAgain() { SFX.click(); clearArrays(); hideScreen(); showHamsterSelect(); }
 function gameOver() {
   gameOn = false; engine.paused = true; updateHud(); SFX.over();
   const card = showScreen('<div class="bd-h">' + T.over + '</div><div class="bd-sub">' + T.overSub + "</div>");
   const b = document.createElement("button"); b.className = "bd-btn"; b.textContent = T.again;
-  b.onclick = () => location.reload(); card.appendChild(b);
+  b.onclick = playAgain; card.appendChild(b);
 }
 function win() {
   gameOn = false; engine.paused = true; updateHud(); SFX.win();
   const card = showScreen('<div style="font-size:48px">🏆🐹</div><div class="bd-h">' + T.win + '</div><div class="bd-sub">' + T.winSub + "</div>");
   const b = document.createElement("button"); b.className = "bd-btn"; b.textContent = T.again;
-  b.onclick = () => location.reload(); card.appendChild(b);
+  b.onclick = playAgain; card.appendChild(b);
 }
 function levelCleared() {
   if (transitioning) return; transitioning = true;
@@ -837,13 +843,13 @@ engine.onStep = (dt) => {
   else {
     const lv = LEVELS[levelIdx];
     spawnTimer -= dt;
-    if (spawnTimer <= 0 && spawnedMin < lv.minions && spawnedMinAlive() < lv.maxAlive) { spawnMinion(); spawnTimer = lv.spawn; }
+    if (spawnTimer <= 0 && spawnedMin < levelMinions && spawnedMinAlive() < levelMaxAlive) { spawnMinion(); spawnTimer = lv.spawn; }
     if (rocketsLeft > 0) { rocketTimer -= dt; if (rocketTimer <= 0) { spawnRocket(); rocketsLeft--; rocketTimer = rnd(2.2, 4.2); } }
     // občasni srček na areni (le če igralcu manjka življenj)
     heartTimer -= dt;
     if (heartTimer <= 0) { if (lives < diff.lives) spawnHeart(); heartTimer = rnd(12, 18); }
     // boss se pojavi, ko so vsi minioni spawnani in pobiti
-    if (lv.boss && !bossSpawned && spawnedMin >= lv.minions && spawnedMinAlive() === 0) spawnBoss();
+    if (lv.boss && !bossSpawned && spawnedMin >= levelMinions && spawnedMinAlive() === 0) spawnBoss();
   }
 
   // izstrelki igralca
@@ -894,7 +900,7 @@ engine.onStep = (dt) => {
       }
       if (e.type === "boss") {
         e.summonCd -= dt;
-        if (e.summonCd <= 0 && spawnedMinAlive() < 4) { spawnMinion(); minRemaining++; e.summonCd = 5; }
+        if (e.summonCd <= 0 && spawnedMinAlive() < levelMaxAlive) { spawnMinion(); minRemaining++; e.summonCd = 5; }
       }
       // kontaktna škoda (robot/boss)
       if (dist < e.r + 0.55) hurtPlayer(1);
@@ -934,7 +940,7 @@ engine.onStep = (dt) => {
   // konec nivoja: vsi minioni pobiti (in boss, če obstaja)
   if (introTimer <= 0 && !transitioning) {
     const lv = LEVELS[levelIdx];
-    const cleared = spawnedMin >= lv.minions && spawnedMinAlive() === 0 && (!lv.boss || bossDead);
+    const cleared = spawnedMin >= levelMinions && spawnedMinAlive() === 0 && (!lv.boss || bossDead);
     if (cleared) levelCleared();
   }
 };
