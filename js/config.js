@@ -150,6 +150,17 @@ const SITE = {
       comic: "bojevanje-dlak",
       game: "games/bojevanje-dlak.html",
     },
+    {
+      id: "skarje-proti-papircku",
+      author: "jakob",
+      cover: "assets/skarje-proti-papircku/cover.webp",
+      title: { sl: "Škarje proti papirčku", en: "Scissors vs. Paper" },
+      blurb: {
+        sl: "3D akcija v puščavnem labirintu iz kaktusov! Ti si papirček: od daleč streljaj z lokom, od blizu sekaj z mečem. Škarje skačejo nate — a ne čez kaktuse. Premagaj jih, poberi puščice in samostrel ter pridi v puščico po zaklad, ki velja za naslednjič!",
+        en: "3D action in a desert maze of cacti! You are a paper sheet: shoot the bow from afar, slash with the sword up close. Scissors leap at you — but not over the cacti. Beat them, grab arrows and the crossbow, and reach the pencil case for a treasure that counts next time!",
+      },
+      game: "games/skarje-proti-papircku.html",
+    },
   ],
 
   /* ---- STRIPI ZA BRALNIK ---- (strip.html?story=ID) */

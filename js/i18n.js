@@ -47,6 +47,8 @@
       bm_hint:       'Premikaj se: <b>↑ ↓ ← →</b> ali <b>W A S D</b> &nbsp;•&nbsp; 📱 Telefon: <b>joystick</b> (spodaj levo)<br />💡 Sprehodi se po hodniku mimo spečih mačk. Reši njihove račune, da prideš do velikega sira!',
       bd_title:      "🐹 Bojevanje dlak ⚔️",
       bd_hint:       'Premikaj se: <b>↑ ↓ ← →</b> ali <b>W A S D</b> &nbsp;•&nbsp; <b>Preslednica</b> = streljaj &nbsp;•&nbsp; <b>M</b> = vodik (meč)<br />📱 Telefon: <b>joystick</b> (spodaj levo) za premik, <b>gumba</b> (spodaj desno): 💧 streljaj in ⚔️ vodik<br />💡 Prosto se gibaj po vesolju! Premagaj robote, sonde in rakete skozi 4 Marse. Robotom lahko vzameš puško in jo obdržiš.',
+      spp_title:     "📄 Škarje proti papirčku ✂️",
+      spp_hint:      'Premikaj se: <b>↑ ↓ ← →</b> ali <b>W A S D</b> &nbsp;•&nbsp; <b>Preslednica</b> = lok / samostrel &nbsp;•&nbsp; <b>M</b> = meč<br />📱 Telefon: <b>joystick</b> (spodaj levo) za premik, <b>gumba</b> (spodaj desno): 🏹 streljaj in ⚔️ meč<br />💡 Škarje skačejo nate, a ne čez kaktuse! Po <b>5</b> premaganih škarjah dobiš puščice (poberi jih s tal), po <b>10</b> samostrel. Premagaj vse in pridi v puščico — zaklad tam velja za vse naslednje igre.',
     },
     en: {
       site_title:    "Action for everyone",
@@ -87,6 +89,8 @@
       bm_hint:       'Move: <b>↑ ↓ ← →</b> or <b>W A S D</b> &nbsp;•&nbsp; 📱 Phone: <b>joystick</b> (bottom-left)<br />💡 Walk down the corridor past the sleeping cats. Solve their math problems to reach the big cheese!',
       bd_title:      "🐹 Battle of Furs ⚔️",
       bd_hint:       'Move: <b>↑ ↓ ← →</b> or <b>W A S D</b> &nbsp;•&nbsp; <b>Space</b> = shoot &nbsp;•&nbsp; <b>M</b> = water sword<br />📱 Phone: <b>joystick</b> (bottom-left) to move, <b>buttons</b> (bottom-right): 💧 shoot and ⚔️ water sword<br />💡 Roam freely through space! Beat robots, probes and rockets across 4 Marses. You can take a robot\'s gun and keep it.',
+      spp_title:     "📄 Scissors vs. Paper ✂️",
+      spp_hint:      'Move: <b>↑ ↓ ← →</b> or <b>W A S D</b> &nbsp;•&nbsp; <b>Space</b> = bow / crossbow &nbsp;•&nbsp; <b>M</b> = sword<br />📱 Phone: <b>joystick</b> (bottom-left) to move, <b>buttons</b> (bottom-right): 🏹 shoot and ⚔️ sword<br />💡 Scissors leap at you, but not over the cacti! Beat <b>5</b> scissors to get arrows (pick them up), beat <b>10</b> to get the crossbow. Beat them all and reach the pencil case — its treasure counts for every game after.',
     },
   };
 
