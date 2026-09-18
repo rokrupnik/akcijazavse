@@ -92,7 +92,7 @@ const engine = new IsoEngine(canvas, {
   bg: SKY,
   camOffset: new THREE.Vector3(0, 18, 13.5),
   solid,
-  speed: 6.2,
+  speed: 6.8,
   radius: 0.42,
 });
 engine.scene.fog = new THREE.Fog(SKY, 26, 52);
@@ -655,7 +655,7 @@ function startGame() {
   fireCd = swordCd = invuln = swordAnim = bowAnim = 0;
   spawnTimer = 0.5; introTimer = 1.5;
   bossSpawned = false; bossDead = false; caseOpen = false;
-  engine.speed = 6.2 + treasure.speed * 0.55;
+  engine.speed = 6.8 + treasure.speed * 0.6;
   setRangedModel();
   gameOn = true; engine.paused = false;
   musicBtn.style.display = "block"; Music.start(); Music.setMood("explore");
@@ -801,7 +801,7 @@ function shoot() {
 function swingSword() {
   if (!gameOn || engine.paused || swordCd > 0) return;
   swordCd = 0.4; swordAnim = 0.26; SFX.sword();
-  const reach = 2.3, f = facingVec(), p = player.position, dmg = 2 + treasure.sword;
+  const reach = 3.0, f = facingVec(), p = player.position, dmg = 2 + treasure.sword;
   for (const e of enemies) {
     const dx = e.group.position.x - p.x, dz = e.group.position.z - p.z, d = Math.hypot(dx, dz) || 1;
     if (d < reach + e.r) {
@@ -911,7 +911,7 @@ engine.onStep = (dt) => {
   // animacija meča in loka
   if (player) {
     const sw = player.userData.sword;
-    if (swordAnim > 0) { swordAnim -= dt; sw.rotation.x = -1.5 * Math.sin((0.26 - Math.max(0, swordAnim)) / 0.26 * Math.PI); } else sw.rotation.x = 0;
+    if (swordAnim > 0) { swordAnim -= dt; sw.rotation.x = 1.5 * Math.sin((0.26 - Math.max(0, swordAnim)) / 0.26 * Math.PI); } else sw.rotation.x = 0;   // zamah NAPREJ (+Z)
     const bw = bolts > 0 ? player.userData.crossbow : player.userData.bow;
     if (bowAnim > 0) { bowAnim -= dt; const s = 1 + 0.25 * Math.sin(bowAnim / 0.18 * Math.PI); bw.scale.set(s, s, s); } else bw.scale.set(1, 1, 1);
   }
